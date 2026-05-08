@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Farming System - Dashboard</title>
@@ -119,8 +119,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const firebaseConfig = {
-            databaseURL: "https://smartfarming-dba16-default-rtdb.asia-southeast1.firebasedatabase.app"
+       const firebaseConfig = {
+      apiKey: "AIzaSyDO5Soka5S_y2HoHGLsLQ6gE03YiDq-KgQ",
+      authDomain: "smartfarming-dba16.firebaseapp.com",
+      databaseURL: "https://smartfarming-dba16-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smartfarming-dba16",
+      storageBucket: "smartfarming-dba16.firebasestorage.app",
+      messagingSenderId: "383159378885",
+      appId: "1:383159378885:web:7b6bfdc36d0adef5e4a1ac",
+      measurementId: "G-W1SGLQW307"
         };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
