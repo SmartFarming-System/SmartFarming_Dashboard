@@ -134,7 +134,7 @@
 
         // --- MQTT 配置 ---
         const MQTT_TOPIC_SETTINGS = "sfs/node_1/sensors/settings";
-        const mqttClient = new Paho.MQTT.Client("broker.emqx.io", Number(8083), "web_client_" + Math.random());
+        const mqttClient = new Paho.MQTT.Client("broker.emqx.io", Number(8084), "web_client_" + Math.random());
 
         mqttClient.onConnectionLost = (responseObject) => {
             if (responseObject.errorCode !== 0) console.log("MQTT Lost: " + responseObject.errorMessage);
@@ -142,7 +142,7 @@
 
         mqttClient.connect({
             onSuccess: () => { console.log("✅ Web MQTT Connected Successfully!"); },
-            useSSL: false,
+            useSSL: true,
             onFailure: (err) => { console.log("❌ MQTT Connection Failed: ", err); }
         });
 
