@@ -42,6 +42,11 @@
             <div id="hum" class="value">--<span class="unit">%</span></div>
             <div id="humThreshold" class="threshold">Trigger: --%</div>
         </div>
+        <div class="card" style="border-top-color: #795548;">
+            <h3>Soil Moisture</h3>
+            <div id="soil" class="value">--<span class="unit">%</span></div>
+            <div id="soilThreshold" class="threshold">Trigger: --%</div>
+        </div>
         <div class="card">
             <h3>Light</h3>
             <div id="light" class="value">--<span class="unit">Lux</span></div>
@@ -50,7 +55,7 @@
         <div id="waterLevelCard" class="card" style="border-top-color: #0288d1;">
             <h3>Water Level</h3>
             <div id="waterLevel" class="value">--<span class="unit">%</span></div>
-            <p id="waterAlert" style="color: #d32f2f; font-weight: bold; display: none; margin: 0;">⚠️ LOW WATER</p>
+            <p id="waterAlert" style="color: #d32f2f; font-weight: bold; display: none; margin-top: 10px;">⚠️ LOW WATER<br><span style="font-size:0.6em">Pump Disabled</span></p>
         </div>
 
         <div class="card chart-card">
@@ -80,6 +85,10 @@
                     <div>
                         <label style="font-size: 0.8em;">Hum On:</label><br>
                         <input type="number" id="inputHumOn" style="width: 60px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8em;">Soil On:</label><br>
+                        <input type="number" id="inputMoiOn" style="width: 60px;">
                     </div>
                     <div>
                         <label style="font-size: 0.8em;">Light On:</label><br>
@@ -203,8 +212,12 @@
         const lightStatusText = document.getElementById('lightStatus');
         const inputTemp = document.getElementById('inputTempOn');
         const inputHum = document.getElementById('inputHumOn');
+        const inputMoi = document.getElementById('inputMoiOn');
         const inputLight = document.getElementById('inputLightOn');
         const saveBtn = document.getElementById('saveSettingsBtn');
+        const waterAlertText = document.getElementById('waterAlert');
+
+        let isFirstLoad = true;
 
         // read from firebase to show data
         const dataRef = ref(db, 'live_data');
@@ -213,11 +226,21 @@
             if (data) {
                 document.getElementById('temp').innerHTML = `${data.temperature || 0}<span class="unit">°C</span>`;
                 document.getElementById('hum').innerHTML = `${data.humidity || 0}<span class="unit">%</span>`;
+                document.getElementById('soil').innerHTML = `${data.moisture || 0}<span class="unit">%</span>`; 
                 document.getElementById('light').innerHTML = `${data.light_lux || 0}<span class="unit">Lux</span>`;
                 document.getElementById('waterLevel').innerHTML = `${data.tank_level || 0}<span class="unit">%</span>`;
                 document.getElementById('time').innerText = `Last Updated: ${data.timestamp}`;
                 
-                // 5. 更新图表数据
+                // warming of water
+                if (data.tank_empty_alert) {
+                    waterAlertText.style.display = "block"; // 显示红字警告
+                    document.getElementById('waterLevelCard').style.borderTopColor = "#d32f2f"; // 卡片边框变红
+                } else {
+                    waterAlertText.style.display = "none"; // 隐藏警告
+                    document.getElementById('waterLevelCard').style.borderTopColor = "#0288d1"; // 卡片边框恢复蓝色
+                }
+
+                // update table
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 if (liveChart.data.labels.length > 15) {
                     liveChart.data.labels.shift();
@@ -227,24 +250,37 @@
                 liveChart.data.labels.push(timeStr);
                 liveChart.data.datasets[0].data.push(data.temperature);
                 liveChart.data.datasets[1].data.push(data.humidity);
-                liveChart.update('none'); // 'none' 可以让更新更流畅，不抖动
+                liveChart.update('none'); 
 
                 // update status
                 pumpToggle.checked = data.water_pump_status || false; 
                 pumpStatusText.innerText = pumpToggle.checked ? "Pump is ON" : "Pump is OFF";
-                fanToggle.checked = data.fan_status_real || false;
+                
+                fanToggle.checked = data.fan_status || false;
                 fanStatusText.innerText = fanToggle.checked ? "Fan is ON" : "Fan is OFF";
+                
                 lightToggle.checked = data.grow_light_state || false;
                 lightStatusText.innerText = lightToggle.checked ? "Light is ON" : "Light is OFF";
 
                 if (data.settings) {
                     document.getElementById('tempThreshold').innerText = `Trigger: ${data.settings.temp_on}°C`;
                     document.getElementById('humThreshold').innerText = `Trigger: ${data.settings.hum_on}%`;
+                    document.getElementById('soilThreshold').innerText = `Trigger: ${data.settings.moi_on}%`; 
                     document.getElementById('lightThreshold').innerText = `Trigger: ${data.settings.light_on} Lux`;
-                    if (!inputTemp.matches(':focus')) {
+                    
+                    if (!inputTemp.matches(':focus') && !inputMoi.matches(':focus')) {
                         inputTemp.value = data.settings.temp_on;
                         inputHum.value = data.settings.hum_on;
+                        inputMoi.value = data.settings.moi_on; 
                         inputLight.value = data.settings.light_on;
+                    }
+
+                    if (isFirstLoad) {
+                        setTimeout(() => { 
+                            sendMqttCommand(data.settings);
+                            console.log("🔄 Auto-synced Firebase settings to Hardware!");
+                        }, 2500); 
+                        isFirstLoad = false; 
                     }
                 }
             }
@@ -258,6 +294,8 @@
                 "temp_space": 2.0,
                 "hum_on": parseFloat(inputHum.value),
                 "hum_space": 5.0,
+                "moi_on": parseFloat(inputMoi.value), 
+                "moi_space": 5.0,                     
                 "light_on": parseFloat(inputLight.value),
                 "light_space": 5.0
             };
