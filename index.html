@@ -24,11 +24,12 @@
         input:checked + .slider:before { transform: translateX(26px); }
         #modeControl:checked + .slider { background-color: #f57c00; }
         .chart-card { width: 90%; max-width: 800px; margin: 20px auto; border-top-color: #1565c0; }
+        input[type="number"] { padding: 5px; border-radius: 5px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
     <h1>Smart Farming System</h1>
-    <p>Real-time Monitoring & Intelligent Control</p>
+    <p>Real-time Monitoring & Cloud Status Sync</p>
 
     <div class="container">
         <div class="card">
@@ -54,7 +55,7 @@
         <div id="waterLevelCard" class="card" style="border-top-color: #0288d1;">
             <h3>Water Level</h3>
             <div id="waterLevel" class="value">--<span class="unit">%</span></div>
-            <p id="waterAlert" style="color: #d32f2f; font-weight: bold; display: none; margin-top: 10px;">⚠️ LOW WATER<br><span style="font-size:0.6em">Pump Disabled</span></p>
+            <p id="waterAlert" style="color: #d32f2f; font-weight: bold; display: none; margin-top: 10px;">⚠️ LOW WATER</p>
         </div>
 
         <div class="card chart-card">
@@ -71,46 +72,22 @@
                     <input type="checkbox" id="modeControl" checked>
                     <span class="slider"></span>
                 </label>
-                <p id="modeDesc" style="font-size: 0.9em; margin-top: 15px;">Initializing...</p>
+                <p id="modeDesc" style="font-size: 0.9em; margin-top: 15px;">Connecting to system...</p>
             </div>
 
             <div class="card" style="width: 85%; max-width: 800px; margin: 20px auto; border-top-color: #2e7d32;">
-                <h3>Set System Triggers (via MQTT)</h3>
+                <h3>Set System Triggers</h3>
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 10px;">
-                    <div>
-                        <label style="font-size: 0.8em;">Temp On:</label><br>
-                        <input type="number" id="inputTempOn" style="width: 50px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Space:</label><br>
-                        <input type="number" id="inputTempSpace" style="width: 40px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Hum On:</label><br>
-                        <input type="number" id="inputHumOn" style="width: 50px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Space:</label><br>
-                        <input type="number" id="inputHumSpace" style="width: 40px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Soil On:</label><br>
-                        <input type="number" id="inputMoiOn" style="width: 50px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Space:</label><br>
-                        <input type="number" id="inputMoiSpace" style="width: 40px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Light On:</label><br>
-                        <input type="number" id="inputLightOn" style="width: 60px;">
-                    </div>
-                    <div>
-                        <label style="font-size: 0.8em;">Space:</label><br>
-                        <input type="number" id="inputLightSpace" style="width: 50px;">
-                    </div>
+                    <div><label>Temp On:</label><br><input type="number" id="inputTempOn" step="0.1"></div>
+                    <div><label>Space:</label><br><input type="number" id="inputTempSpace" step="0.1"></div>
+                    <div><label>Hum On:</label><br><input type="number" id="inputHumOn" step="0.1"></div>
+                    <div><label>Space:</label><br><input type="number" id="inputHumSpace" step="0.1"></div>
+                    <div><label>Soil On:</label><br><input type="number" id="inputMoiOn" step="0.1"></div>
+                    <div><label>Space:</label><br><input type="number" id="inputMoiSpace" step="0.1"></div>
+                    <div><label>Light On:</label><br><input type="number" id="inputLightOn" step="0.1"></div>
+                    <div><label>Space:</label><br><input type="number" id="inputLightSpace" step="0.1"></div>
                     <div style="align-self: flex-end;">
-                        <button id="saveSettingsBtn" style="background-color: #2e7d32; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer;">Save & Send</button>
+                        <button id="saveSettingsBtn" style="background-color: #2e7d32; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">Save & Send</button>
                     </div>
                 </div>
             </div>
@@ -144,7 +121,7 @@
         </div>
     </div>
 
-    <div id="time" class="timestamp">Last Updated: Connecting MQTT...</div>
+    <div id="time" class="timestamp">Status: Initializing...</div>
 
     <script type="text/javascript">
         const MQTT_CONFIG = {
@@ -155,19 +132,8 @@
             user: "Esp32",      
             pass: "Esp32_32",   
             topicData: "sfs/node_1/sensors/data",
-            topicSettings: "sfs/node_1/sensors/settings"
-        };
-
-        // 设置默认值给 User 看到
-        window.onload = () => {
-            document.getElementById('inputTempOn').value = 30.0;
-            document.getElementById('inputTempSpace').value = 2.0;
-            document.getElementById('inputHumOn').value = 75.0;
-            document.getElementById('inputHumSpace').value = 5.0;
-            document.getElementById('inputMoiOn').value = 30.0;
-            document.getElementById('inputMoiSpace').value = 5.0;
-            document.getElementById('inputLightOn').value = 500.0;
-            document.getElementById('inputLightSpace').value = 200.0;
+            topicSettings: "sfs/node_1/sensors/settings",
+            topicStatus: "sfs/node_1/sensors/status" // ✨ 新 Topic
         };
 
         const ctx = document.getElementById('liveChart').getContext('2d');
@@ -180,7 +146,7 @@
                     { label: 'Hum (%)', data: [], borderColor: '#2e7d32', backgroundColor: 'rgba(46, 125, 50, 0.1)', fill: true, tension: 0.4 }
                 ]
             },
-            options: { responsive: true, scales: { x: { display: true }, y: { display: true } } }
+            options: { responsive: true, animation: false }
         });
 
         const mqttClient = new Paho.MQTT.Client(MQTT_CONFIG.host, Number(MQTT_CONFIG.port), MQTT_CONFIG.path, MQTT_CONFIG.clientId);
@@ -188,27 +154,38 @@
         mqttClient.onMessageArrived = (message) => {
             try {
                 const data = JSON.parse(message.payloadString);
-                updateUI(data);
-            } catch (e) { console.error("JSON Parse Error", e); }
+                
+                // ✨ 分类处理消息
+                if (message.destinationName === MQTT_CONFIG.topicData) {
+                    updateSensorUI(data);
+                } else if (message.destinationName === MQTT_CONFIG.topicStatus) {
+                    updateSystemStatus(data);
+                }
+            } catch (e) { console.error("JSON Error", e); }
         };
 
         mqttClient.connect({
             useSSL: true, userName: MQTT_CONFIG.user, password: MQTT_CONFIG.pass,
             onSuccess: () => {
-                console.log("✅ Web MQTT Connected!");
+                console.log("✅ MQTT Connected!");
                 mqttClient.subscribe(MQTT_CONFIG.topicData);
-                document.getElementById('time').innerText = "Last Updated: Connected & Waiting for Data...";
+                mqttClient.subscribe(MQTT_CONFIG.topicStatus);
+                document.getElementById('time').innerText = "Status: Online & Syncing";
             }
         });
 
-        function updateUI(data) {
+        // 1. 处理传感器数据
+        function updateSensorUI(data) {
             if (data.temperature !== undefined) {
-                document.getElementById('temp').innerHTML = `${data.temperature}<span class="unit">°C</span>`;
+                document.getElementById('temp').innerHTML = `${data.temperature.toFixed(1)}<span class="unit">°C</span>`;
                 document.getElementById('hum').innerHTML = `${data.humidity}<span class="unit">%</span>`;
                 document.getElementById('soil').innerHTML = `${data.moisture}<span class="unit">%</span>`; 
-                document.getElementById('light').innerHTML = `${data.light_lux}<span class="unit">Lux</span>`;
+                document.getElementById('light').innerHTML = `${data.light_lux.toFixed(0)}<span class="unit">Lux</span>`;
                 document.getElementById('waterLevel').innerHTML = `${data.tank_level}<span class="unit">%</span>`;
                 
+                // 水箱警报显示
+                document.getElementById('waterAlert').style.display = data.tank_empty_alert ? "block" : "none";
+
                 // 更新图表
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 if (liveChart.data.labels.length > 15) {
@@ -220,35 +197,60 @@
                 liveChart.data.datasets[0].data.push(data.temperature);
                 liveChart.data.datasets[1].data.push(data.humidity);
                 liveChart.update('none');
-                document.getElementById('time').innerText = `Last Updated: ${new Date().toLocaleString()}`;
-            }
-
-            // 更新状态反馈
-            document.getElementById('pumpControl').checked = data.water_pump_status || false;
-            document.getElementById('pumpStatus').innerText = data.water_pump_status ? "Pump is ON" : "Pump is OFF";
-            document.getElementById('fanControl').checked = data.fan_status || false;
-            document.getElementById('fanStatus').innerText = data.fan_status ? "Fan is ON" : "Fan is OFF";
-            document.getElementById('lightControl').checked = data.grow_light_state || false;
-            document.getElementById('lightStatus').innerText = data.grow_light_state ? "Light is ON" : "Light is OFF";
-
-            // 如果硬件发回了 settings，同步显示到触发器文字上
-            if (data.settings) {
-                document.getElementById('tempThreshold').innerText = `Trigger: ${data.settings.temp_on}°C (±${data.settings.temp_space})`;
-                document.getElementById('humThreshold').innerText = `Trigger: ${data.settings.hum_on}% (±${data.settings.hum_space})`;
-                document.getElementById('soilThreshold').innerText = `Trigger: ${data.settings.moi_on}% (±${data.settings.moi_space})`; 
-                document.getElementById('lightThreshold').innerText = `Trigger: ${data.settings.light_on} Lux (±${data.settings.light_space})`;
+                document.getElementById('time').innerText = `Last Update: ${new Date().toLocaleTimeString()}`;
             }
         }
 
+        // 2. 处理系统设置同步 (来自 status topic)
+        function updateSystemStatus(data) {
+            console.log("🔄 Syncing from ESP32 status...", data);
+
+            // 同步模式开关
+            const isAuto = !data.manual_mode;
+            document.getElementById('modeControl').checked = isAuto;
+            document.getElementById('modeDesc').innerText = isAuto ? "Automatic Mode: System Managing." : "Manual Mode: User Control.";
+            
+            // 模式改变时更新控件启用状态
+            document.getElementById('pumpControl').disabled = isAuto;
+            document.getElementById('fanControl').disabled = isAuto;
+            document.getElementById('lightControl').disabled = isAuto;
+
+            // 同步触发阈值显示
+            document.getElementById('tempThreshold').innerText = `Trigger: ${data.temp_on}°C (±${data.temp_space})`;
+            document.getElementById('humThreshold').innerText = `Trigger: ${data.hum_on}% (±${data.hum_space})`;
+            document.getElementById('soilThreshold').innerText = `Trigger: ${data.moi_on}% (±${data.moi_space})`; 
+            document.getElementById('lightThreshold').innerText = `Trigger: ${data.light_on} Lux (±${data.light_space})`;
+
+            // 同步输入框数值
+            document.getElementById('inputTempOn').value = data.temp_on;
+            document.getElementById('inputTempSpace').value = data.temp_space;
+            document.getElementById('inputHumOn').value = data.hum_on;
+            document.getElementById('inputHumSpace').value = data.hum_space;
+            document.getElementById('inputMoiOn').value = data.moi_on;
+            document.getElementById('inputMoiSpace').value = data.moi_space;
+            document.getElementById('inputLightOn').value = data.light_on;
+            document.getElementById('inputLightSpace').value = data.light_space;
+
+            // 同步继电器开关状态
+            document.getElementById('pumpControl').checked = data.manual_pump;
+            document.getElementById('pumpStatus').innerText = data.manual_pump ? "Pump is ON" : "Pump is OFF";
+            document.getElementById('fanControl').checked = data.manual_fan;
+            document.getElementById('fanStatus').innerText = data.manual_fan ? "Fan is ON" : "Fan is OFF";
+            document.getElementById('lightControl').checked = data.manual_light;
+            document.getElementById('lightStatus').innerText = data.manual_light ? "Light is ON" : "Light is OFF";
+        }
+
+        // MQTT 发送指令
         function sendMqttCommand(payload) {
             if (mqttClient.isConnected()) {
                 const message = new Paho.MQTT.Message(JSON.stringify(payload));
                 message.destinationName = MQTT_CONFIG.topicSettings;
                 mqttClient.send(message);
-                console.log("📡 MQTT Sent:", payload);
+                console.log("📡 Sent Settings:", payload);
             }
         }
 
+        // 按钮：保存设置
         document.getElementById('saveSettingsBtn').addEventListener('click', () => {
             const payload = {
                 "manual_mode": !document.getElementById('modeControl').checked,
@@ -262,19 +264,16 @@
                 "light_space": parseFloat(document.getElementById('inputLightSpace').value)
             };
             sendMqttCommand(payload);
-            alert("Settings sent with Space values!");
+            alert("Settings deployed to Cloud!");
         });
 
+        // 模式开关逻辑
         document.getElementById('modeControl').addEventListener('change', (e) => {
             const isAuto = e.target.checked;
-            document.getElementById('modeDesc').innerText = isAuto ? "Automatic Mode: System Managing." : "Manual Mode: User Control.";
-            document.getElementById('pumpControl').disabled = isAuto;
-            document.getElementById('fanControl').disabled = isAuto;
-            document.getElementById('lightControl').disabled = isAuto;
             sendMqttCommand({ "manual_mode": !isAuto });
         });
 
-        // 手动控制监听
+        // 手动开关逻辑
         document.getElementById('pumpControl').addEventListener('change', (e) => sendMqttCommand({ "manual_pump": e.target.checked }));
         document.getElementById('fanControl').addEventListener('change', (e) => sendMqttCommand({ "manual_fan": e.target.checked }));
         document.getElementById('lightControl').addEventListener('change', (e) => sendMqttCommand({ "manual_light": e.target.checked }));
