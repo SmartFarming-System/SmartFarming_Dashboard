@@ -1,261 +1,254 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Farming System - Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <title>Smart Farming Pro - Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style> 
-    /* style of dashboard */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8f5e9; text-align: center; padding: 20px; }
-        h1 { color: #2e7d32; }
-        .container { max-width: 900px; margin: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
-        .card { background: white; border-radius: 15px; padding: 20px; width: 200px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid #2e7d32; transition: 0.3s; }
-        .control-section { width: 100%; margin-top: 30px; }
-        .value { font-size: 2em; font-weight: bold; color: #1565c0; margin: 10px 0; }
-        .unit { font-size: 0.5em; color: #666; }
-        .threshold { font-size: 0.85em; color: #f57c00; font-weight: 500; margin-top: 5px; }
-        .timestamp { font-size: 0.8em; color: #888; margin-top: 30px; }
-        .mode-card { border-top: 5px solid #f57c00; width: 300px; margin: 0 auto 20px; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
-        .switch { position: relative; display: inline-block; width: 60px; height: 34px; margin-top: 10px; }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2d6a4f; --accent: #ff9f1c; --bg: #f8f9fa;
+            --text: #1b4332; --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
+
+        /* --- 侧边栏 --- */
+        .sidebar { 
+            height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; 
+            background: linear-gradient(180deg, #1b4332 0%, #2d6a4f 100%); 
+            overflow-x: hidden; transition: 0.4s; box-shadow: 4px 0 15px rgba(0,0,0,0.1); 
+        }
+        .sidebar-header { padding: 30px 20px; text-align: center; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar a { 
+            padding: 18px 25px; text-decoration: none; font-size: 17px; color: rgba(255,255,255,0.8); 
+            display: flex; align-items: center; gap: 15px; transition: 0.3s; border-left: 4px solid transparent;
+        }
+        .sidebar a:hover, .sidebar a.active { color: white; background: rgba(255,255,255,0.1); border-left-color: var(--accent); }
+        .sidebar .closebtn { position: absolute; top: 15px; right: 20px; font-size: 30px; color: white; cursor: pointer; }
+
+        /* --- 顶部固定导航 --- */
+        .nav-header { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 65px; 
+            background: white; display: flex; align-items: center; padding: 0 20px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 500;
+        }
+        .menu-btn { font-size: 24px; cursor: pointer; color: var(--primary); }
+        .nav-title { margin-left: 20px; font-weight: 700; font-size: 1.2rem; color: var(--primary); }
+
+        /* --- 页面容器 --- */
+        .page { display: none; padding: 100px 20px 40px; max-width: 1100px; margin: auto; animation: slideUp 0.5s ease-out; }
+        .active-page { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 数值卡片 --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-top: 20px; }
+        .card { 
+            background: var(--card-bg); border-radius: 20px; padding: 30px 20px; border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03); transition: 0.3s; text-align: center;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 20px; }
+        .card i { font-size: 1.8rem; margin-bottom: 15px; color: var(--primary); }
+
+        .value-container { display: flex; align-items: baseline; justify-content: center; margin: 5px 0; }
+        .value { font-size: 3rem; font-weight: 800; color: #2d3436; }
+        .unit { font-size: 1.2rem; color: #999; margin-left: 8px; font-weight: 600; }
+
+        /* --- 设置与按钮 --- */
+        .setting-card { text-align: left; border-top: 5px solid var(--primary); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 5px; }
+        input[type="number"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; font-weight: 600; box-sizing: border-box; }
+        .btn-deploy { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+
+        /* --- 开关控件 --- */
+        .switch { position: relative; display: inline-block; width: 55px; height: 30px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #2e7d32; }
-        input:checked + .slider:before { transform: translateX(26px); }
-        #modeControl:checked + .slider { background-color: #f57c00; }
-        .chart-card { width: 90%; max-width: 800px; margin: 20px auto; border-top-color: #1565c0; }
-        input[type="number"] { padding: 5px; border-radius: 5px; border: 1px solid #ccc; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dee2e6; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        #modeControl:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(25px); }
+
+        /* --- 历史记录 --- */
+        .log-item { background: white; border-radius: 15px; padding: 18px; margin-bottom: 15px; cursor: pointer; border-left: 5px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .log-details { display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 0.9rem; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* --- 手机端适配 --- */
+        @media screen and (max-width: 600px) {
+            .page { padding: 90px 15px 30px; }
+            .value { font-size: 2.4rem; }
+            .unit { font-size: 1rem; }
+            .btn-deploy { width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <h1>Smart Farming System</h1>
-    <p>Real-time Monitoring & Cloud Status Sync</p>
 
-    <div class="container">
-        <div class="card">
-            <h3>Temperature</h3>
-            <div id="temp" class="value">--<span class="unit">°C</span></div>
-            <div id="tempThreshold" class="threshold">Trigger: --°C</div>
-        </div>
-        <div class="card">
-            <h3>Humidity</h3>
-            <div id="hum" class="value">--<span class="unit">%</span></div>
-            <div id="humThreshold" class="threshold">Trigger: --%</div>
-        </div>
-        <div class="card" style="border-top-color: #795548;">
-            <h3>Soil Moisture</h3>
-            <div id="soil" class="value">--<span class="unit">%</span></div>
-            <div id="soilThreshold" class="threshold">Trigger: --%</div>
-        </div>
-        <div class="card">
-            <h3>Light</h3>
-            <div id="light" class="value">--<span class="unit">Lux</span></div>
-            <div id="lightThreshold" class="threshold">Trigger: --Lux</div>
-        </div>
-        <div id="waterLevelCard" class="card" style="border-top-color: #0288d1;">
-            <h3>Water Level</h3>
-            <div id="waterLevel" class="value">--<span class="unit">%</span></div>
-            <p id="waterAlert" style="color: #d32f2f; font-weight: bold; display: none; margin-top: 10px;">⚠️ LOW WATER</p>
-        </div>
+    <div id="mySidebar" class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-leaf fa-2x"></i><h3>Smart Farming System</h3></div>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#" class="nav-link active" onclick="showPage('page1', this)"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="#" class="nav-link" onclick="showPage('page2', this)"><i class="fas fa-sliders-h"></i> Mode Control</a>
+        <a href="#" class="nav-link" onclick="showPage('page3', this)"><i class="fas fa-bullseye"></i> Thresholds</a>
+        <a href="#" class="nav-link" onclick="showPage('page4', this)"><i class="fas fa-history"></i> History Data</a>
+    </div>
 
-        <div class="card chart-card">
-            <h3>Live Environmental Trend</h3>
-            <canvas id="liveChart" height="120"></canvas>
-        </div>
+    <div class="nav-header">
+        <div class="menu-btn" onclick="openNav()"><i class="fas fa-bars"></i></div>
+        <div class="nav-title">Smart Farming Control Center</div>
+    </div>
 
-        <div class="control-section">
-            <hr style="width: 80%; border: 0.5px solid #ccc; margin: 20px auto;">
-            
-            <div class="card mode-card">
-                <h3 id="modeTitle">Automatic Mode</h3>
-                <label class="switch">
-                    <input type="checkbox" id="modeControl" checked>
-                    <span class="slider"></span>
-                </label>
-                <p id="modeDesc" style="font-size: 0.9em; margin-top: 15px;">Connecting to system...</p>
-            </div>
-
-            <div class="card" style="width: 85%; max-width: 800px; margin: 20px auto; border-top-color: #2e7d32;">
-                <h3>Set System Triggers</h3>
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 10px;">
-                    <div><label>Temp On:</label><br><input type="number" id="inputTempOn" step="0.1"></div>
-                    <div><label>Space:</label><br><input type="number" id="inputTempSpace" step="0.1"></div>
-                    <div><label>Hum On:</label><br><input type="number" id="inputHumOn" step="0.1"></div>
-                    <div><label>Space:</label><br><input type="number" id="inputHumSpace" step="0.1"></div>
-                    <div><label>Soil On:</label><br><input type="number" id="inputMoiOn" step="0.1"></div>
-                    <div><label>Space:</label><br><input type="number" id="inputMoiSpace" step="0.1"></div>
-                    <div><label>Light On:</label><br><input type="number" id="inputLightOn" step="0.1"></div>
-                    <div><label>Space:</label><br><input type="number" id="inputLightSpace" step="0.1"></div>
-                    <div style="align-self: flex-end;">
-                        <button id="saveSettingsBtn" style="background-color: #2e7d32; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">Save & Send</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <div class="card" style="margin: 10px; width: 220px; max-width: 85%;">
-                    <h3>Water Pump</h3>
-                    <label class="switch">
-                        <input type="checkbox" id="pumpControl">
-                        <span class="slider"></span>
-                    </label>
-                    <p id="pumpStatus">Pump is OFF</p>
-                </div>
-                <div class="card" style="margin: 10px; width: 220px; max-width: 85%; border-top-color: #388e3c;">
-                    <h3>DC Fan</h3>
-                    <label class="switch">
-                        <input type="checkbox" id="fanControl">
-                        <span class="slider"></span>
-                    </label>
-                    <p id="fanStatus">Fan is OFF</p>
-                </div>
-                <div class="card" style="margin: 10px; width: 220px; max-width: 85%; border-top-color: #fbc02d;">
-                    <h3>Grow Light</h3>
-                    <label class="switch">
-                        <input type="checkbox" id="lightControl">
-                        <span class="slider"></span>
-                    </label>
-                    <p id="lightStatus">Light is OFF</p>
-                </div>
+    <div id="page1" class="page active-page">
+        <div class="grid">
+            <div class="card"><i class="fas fa-temperature-high"></i><h3>Temperature</h3><div class="value-container"><span id="temp" class="value">--</span><span class="unit">°C</span></div></div>
+            <div class="card"><i class="fas fa-tint"></i><h3>Humidity</h3><div class="value-container"><span id="hum" class="value">--</span><span class="unit">%</span></div></div>
+            <div class="card"><i class="fas fa-seedling"></i><h3>Soil Moisture</h3><div class="value-container"><span id="soil" class="value">--</span><span class="unit">%</span></div></div>
+            <div class="card"><i class="fas fa-sun"></i><h3>Light Lux</h3><div class="value-container"><span id="light" class="value">--</span><span class="unit">Lx</span></div></div>
+            <div class="card"><i class="fas fa-water"></i><h3>Water Level</h3><div class="value-container"><span id="waterLevel" class="value">--</span><span class="unit">%</span></div>
+                <div id="waterAlert" style="display:none; color:red; font-weight:bold; font-size:0.7rem; margin-top:10px;">⚠️ LOW WATER</div>
             </div>
         </div>
     </div>
 
-    <div id="time" class="timestamp">Status: Initializing...</div>
+    <div id="page2" class="page">
+        <div class="card" style="max-width: 400px; margin: 0 auto 50px; border-top: 6px solid var(--accent);">
+            <h3 id="modeTitle">Automatic Mode</h3>
+            <label class="switch"><input type="checkbox" id="modeControl" checked><span class="slider"></span></label>
+            <p id="modeDesc" style="font-weight: 600; color: #555;">Smart monitoring active</p>
+        </div>
+        <div id="manualArea" style="display: none;">
+            <h2 style="text-align: center;">Manual Overrides</h2>
+            <div class="grid">
+                <div class="card"><h3>Water Pump</h3><label class="switch"><input type="checkbox" id="pumpControl"><span class="slider"></span></label><p id="pumpStatus">OFF</p></div>
+                <div class="card"><h3>DC Fan</h3><label class="switch"><input type="checkbox" id="fanControl"><span class="slider"></span></label><p id="fanStatus">OFF</p></div>
+                <div class="card"><h3>Grow Light</h3><label class="switch"><input type="checkbox" id="lightControl"><span class="slider"></span></label><p id="lightStatus">OFF</p></div>
+            </div>
+        </div>
+    </div>
 
-    <script type="text/javascript">
-        const MQTT_CONFIG = {
-            host: "vb41b58d.ala.asia-southeast1.emqxsl.com",
-            port: 8084,
-            path: "/mqtt", // WebSocket path for EMQX Cloud 
-            clientId: "web_client_" + Math.random().toString(16).substring(2, 8), // will generate a random client ID for each session 
-            user: "Esp32",      
-            pass: "Esp32_32",   
-            topicData: "sfs/node_1/sensors/data", // data of hardware sensors
-            topicSettings: "sfs/node_1/sensors/settings", // to send settings from dashboard to ESP32 
-            topicStatus: "sfs/node_1/sensors/status" // status sync from ESP32 to dashboard (including current settings and manual control states)
+    <div id="page3" class="page">
+        <h2 style="text-align: center;">Configurations</h2>
+        <div class="grid">
+            <div class="card setting-card"><h4>️ Temperature</h4><div class="input-group"><label>Trigger On (°C)</label><input type="number" id="inputTempOn" step="0.1"></div><div class="input-group"><label>Space</label><input type="number" id="inputTempSpace" step="0.1"></div></div>
+            <div class="card setting-card"><h4> Humidity</h4><div class="input-group"><label>Trigger On (%)</label><input type="number" id="inputHumOn" step="0.1"></div><div class="input-group"><label>Space</label><input type="number" id="inputHumSpace" step="0.1"></div></div>
+            <div class="card setting-card"><h4> Soil Moisture</h4><div class="input-group"><label>Trigger On (%)</label><input type="number" id="inputMoiOn" step="0.1"></div><div class="input-group"><label>Space</label><input type="number" id="inputMoiSpace" step="0.1"></div></div>
+            <div class="card setting-card"><h4> Light Lux</h4><div class="input-group"><label>Trigger On (Lx)</label><input type="number" id="inputLightOn" step="1"></div><div class="input-group"><label>Space</label><input type="number" id="inputLightSpace" step="1"></div></div>
+        </div>
+        <div style="text-align: center; margin-top: 40px;"><button class="btn-deploy" onclick="deploy()"> Deploy Settings</button></div>
+    </div>
+
+    <div id="page4" class="page">
+        <h2 style="text-align: center;">History Records</h2>
+        <div id="logContainer" style="max-width: 600px; margin: auto;"><p style="text-align: center;">Fetching Cloud Data...</p></div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            sbUrl: "https://dygrbyrpseknvkyshvir.supabase.co",
+            sbKey: "sb_publishable_w9VXjh53E637ngwGo-3w0w_IgyC4rwA",
+            mqttHost: "vb41b58d.ala.asia-southeast1.emqxsl.com",
+            user: "Esp32", pass: "Esp32_32",
+            topics: { data: "sfs/node_1/sensors/data", set: "sfs/node_1/sensors/settings", status: "sfs/node_1/sensors/status" }
         };
 
-        const ctx = document.getElementById('liveChart').getContext('2d'); // Chart.js instance for live temperature and humidity trends
-        const liveChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    { label: 'Temp (°C)', data: [], borderColor: '#1565c0', backgroundColor: 'rgba(21, 101, 192, 0.1)', fill: true, tension: 0.4 }, // Temperature dataset with styling
-                    { label: 'Hum (%)', data: [], borderColor: '#2e7d32', backgroundColor: 'rgba(46, 125, 50, 0.1)', fill: true, tension: 0.4 } // Humidity dataset with styling
-                ]
-            },
-            options: { responsive: true, animation: false } // Disable animation for real-time updates
-        });
+        const sb = window.supabase.createClient(CONFIG.sbUrl, CONFIG.sbKey);
+        const mqtt = new Paho.MQTT.Client(CONFIG.mqttHost, 8084, "/mqtt", "web_" + Math.random().toString(16).slice(2,8));
 
-        const mqttClient = new Paho.MQTT.Client(MQTT_CONFIG.host, Number(MQTT_CONFIG.port), MQTT_CONFIG.path, MQTT_CONFIG.clientId); // Create MQTT client instance
-
-        mqttClient.onMessageArrived = (message) => {
-            try {
-                const data = JSON.parse(message.payloadString);
-                
-                // Determine message type based on topic and update UI accordingly
-                if (message.destinationName === MQTT_CONFIG.topicData) {
-                    updateSensorUI(data);
-                } else if (message.destinationName === MQTT_CONFIG.topicStatus) {
-                    updateSystemStatus(data);
-                }
-            } catch (error) { // Handle JSON parsing errors gracefully
-                console.error("JSON Error", error);
-            }
-        };
-
-        mqttClient.connect({ // Connect to MQTT broker with specified options
-            useSSL: true, userName: MQTT_CONFIG.user, password: MQTT_CONFIG.pass,
-            onSuccess: () => {
-                console.log(" MQTT Connected!");
-                mqttClient.subscribe(MQTT_CONFIG.topicData);
-                mqttClient.subscribe(MQTT_CONFIG.topicStatus);
-                document.getElementById('time').innerText = "Status: Online & Syncing"; // Update status text on successful connection
-            }
-        });
-
-        // update the hardware sensor data on dashboard (from data topic) 
-        function updateSensorUI(data) {
-            if (data.temperature !== undefined) {
-                document.getElementById('temp').innerHTML = `${data.temperature.toFixed(1)}<span class="unit">°C</span>`;
-                document.getElementById('hum').innerHTML = `${data.humidity}<span class="unit">%</span>`;
-                document.getElementById('soil').innerHTML = `${data.moisture}<span class="unit">%</span>`; 
-                document.getElementById('light').innerHTML = `${data.light_lux.toFixed(0)}<span class="unit">Lux</span>`;
-                document.getElementById('waterLevel').innerHTML = `${data.tank_level}<span class="unit">%</span>`;
-                
-                // logic of water empty alert display
-                document.getElementById('waterAlert').style.display = data.tank_empty_alert ? "block" : "none";
-
-                // Update live chart with new data points, keeping only the latest 15 entries for clarity
-                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                if (liveChart.data.labels.length > 15) {
-                    liveChart.data.labels.shift();
-                    liveChart.data.datasets[0].data.shift();
-                    liveChart.data.datasets[1].data.shift();
-                }
-                liveChart.data.labels.push(timeStr);
-                liveChart.data.datasets[0].data.push(data.temperature);
-                liveChart.data.datasets[1].data.push(data.humidity);
-                liveChart.update('none');
-                document.getElementById('time').innerText = `Last Update: ${new Date().toLocaleTimeString()}`;
-            }
+        function openNav() { 
+            const width = window.innerWidth < 600 ? "80%" : "280px";
+            document.getElementById("mySidebar").style.width = width; 
+        }
+        function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+        
+        function showPage(id, link) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active-page');
+            if(link) link.classList.add('active');
+            closeNav();
+            if(id === 'page4') loadLogs();
         }
 
-        // update the system status and current settings on dashboard (from status topic)
-        function updateSystemStatus(data) {
-            console.log("🔄 Syncing from ESP32 status...", data);
+        mqtt.onMessageArrived = (msg) => {
+            const d = JSON.parse(msg.payloadString);
+            if (msg.destinationName === CONFIG.topics.data) {
+                // 实时更新卡片数字
+                document.getElementById('temp').innerText = d.temperature.toFixed(1);
+                document.getElementById('hum').innerText = d.humidity;
+                document.getElementById('soil').innerText = d.moisture;
+                document.getElementById('light').innerText = d.light_lux.toFixed(0);
+                document.getElementById('waterLevel').innerText = d.tank_level;
+                document.getElementById('waterAlert').style.display = d.tank_empty_alert ? "block" : "none";
+            }
+            if (msg.destinationName === CONFIG.topics.status) syncUI(d);
+        };
 
-             // sync mode status and description 
-            const isAuto = !data.manual_mode;
+        mqtt.connect({ useSSL: true, userName: CONFIG.user, password: CONFIG.pass, onSuccess: () => {
+            mqtt.subscribe(CONFIG.topics.data); mqtt.subscribe(CONFIG.topics.status);
+        }});
+
+        function syncUI(d) {
+            const isAuto = !d.manual_mode;
             document.getElementById('modeControl').checked = isAuto;
-            document.getElementById('modeDesc').innerText = isAuto ? "Automatic Mode: System Managing." : "Manual Mode: User Control.";
-            
-            // if the status is auto, disable the manual control switches; if manual, enable them for user interaction
-            document.getElementById('pumpControl').disabled = isAuto;
-            document.getElementById('fanControl').disabled = isAuto;
-            document.getElementById('lightControl').disabled = isAuto;
+            // 模式同步隐藏逻辑
+            document.getElementById('manualArea').style.display = isAuto ? "none" : "block";
+            document.getElementById('modeTitle').innerText = isAuto ? "Automatic Mode" : "Manual Mode";
 
-            // sync the threshold display text with current settings from ESP32 status, showing on and space for each parameter
-            document.getElementById('tempThreshold').innerText = `Trigger: ${data.temp_on}°C (±${data.temp_space})`;
-            document.getElementById('humThreshold').innerText = `Trigger: ${data.hum_on}% (±${data.hum_space})`;
-            document.getElementById('soilThreshold').innerText = `Trigger: ${data.moi_on}% (±${data.moi_space})`; 
-            document.getElementById('lightThreshold').innerText = `Trigger: ${data.light_on} Lux (±${data.light_space})`;
+            // 同步输入框
+            document.getElementById('inputTempOn').value = d.temp_on;
+            document.getElementById('inputTempSpace').value = d.temp_space;
+            document.getElementById('inputHumOn').value = d.hum_on;
+            document.getElementById('inputHumSpace').value = d.hum_space;
+            document.getElementById('inputMoiOn').value = d.moi_on;
+            document.getElementById('inputMoiSpace').value = d.moi_space;
+            document.getElementById('inputLightOn').value = d.light_on;
+            document.getElementById('inputLightSpace').value = d.light_space;
 
-            // sync the input field values with current settings from ESP32 status
-            document.getElementById('inputTempOn').value = data.temp_on;
-            document.getElementById('inputTempSpace').value = data.temp_space;
-            document.getElementById('inputHumOn').value = data.hum_on;
-            document.getElementById('inputHumSpace').value = data.hum_space;
-            document.getElementById('inputMoiOn').value = data.moi_on;
-            document.getElementById('inputMoiSpace').value = data.moi_space;
-            document.getElementById('inputLightOn').value = data.light_on;
-            document.getElementById('inputLightSpace').value = data.light_space;
-
-            // sync the relay switch states
-            document.getElementById('pumpControl').checked = data.manual_pump;
-            document.getElementById('pumpStatus').innerText = data.manual_pump ? "Pump is ON" : "Pump is OFF";
-            document.getElementById('fanControl').checked = data.manual_fan;
-            document.getElementById('fanStatus').innerText = data.manual_fan ? "Fan is ON" : "Fan is OFF";
-            document.getElementById('lightControl').checked = data.manual_light;
-            document.getElementById('lightStatus').innerText = data.manual_light ? "Light is ON" : "Light is OFF";
+            // 同步继电器按钮
+            document.getElementById('pumpControl').checked = d.manual_pump;
+            document.getElementById('pumpStatus').innerText = d.manual_pump ? "ON" : "OFF";
+            document.getElementById('fanControl').checked = d.manual_fan;
+            document.getElementById('fanStatus').innerText = d.manual_fan ? "ON" : "OFF";
+            document.getElementById('lightControl').checked = d.manual_light;
+            document.getElementById('lightStatus').innerText = d.manual_light ? "ON" : "OFF";
         }
 
-        // MQTT send the command to ESP32 (from dashboard to ESP32)
-        function sendMqttCommand(payload) {
-            if (mqttClient.isConnected()) {
-                const message = new Paho.MQTT.Message(JSON.stringify(payload));
-                message.destinationName = MQTT_CONFIG.topicSettings;
-                mqttClient.send(message);
-                console.log("📡 Sent Settings:", payload);
-            }
+        async function loadLogs() {
+            const list = document.getElementById('logContainer');
+            const { data, error } = await sb.from('sensor_logs').select('*').order('created_at', { ascending: false }).limit(20);
+            if(error) return;
+            list.innerHTML = "";
+            data.forEach(log => {
+                const item = document.createElement('div');
+                item.className = "log-item";
+                const time = new Date(log.created_at).toLocaleString();
+                item.innerHTML = `<div style="display:flex; justify-content:space-between;"><strong> ${time}</strong><i class="fas fa-chevron-down"></i></div>
+                    <div class="log-details" id="lg-${log.id}">
+                        <span>️ Temp: ${log.temperature}°</span><span> Hum: ${log.humidity}%</span>
+                        <span> Soil: ${log.soil_moisture}%</span><span> Lux: ${log.light_lux}</span>
+                    </div>`;
+                item.onclick = () => {
+                    const el = document.getElementById(`lg-${log.id}`);
+                    el.style.display = (el.style.display === "grid") ? "none" : "grid";
+                };
+                list.appendChild(item);
+            });
         }
 
-        // button to save the settings input by user and send to ESP32 via MQTT, also update the threshold display text immediately for better user experience without waiting for ESP32 status sync
-        document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-            const payload = {
+        function send(payload) {
+            const msg = new Paho.MQTT.Message(JSON.stringify(payload));
+            msg.destinationName = CONFIG.topics.set;
+            mqtt.send(msg);
+        }
+
+        function deploy() {
+            send({
                 "manual_mode": !document.getElementById('modeControl').checked,
                 "temp_on": parseFloat(document.getElementById('inputTempOn').value),
                 "temp_space": parseFloat(document.getElementById('inputTempSpace').value),
@@ -265,21 +258,14 @@
                 "moi_space": parseFloat(document.getElementById('inputMoiSpace').value),
                 "light_on": parseFloat(document.getElementById('inputLightOn').value),
                 "light_space": parseFloat(document.getElementById('inputLightSpace').value)
-            };
-            sendMqttCommand(payload);
-            alert("Settings deployed to Cloud!");
-        });
+            });
+            alert("Settings deployed!");
+        }
 
-        // logic of mode switch, when user toggles between automatic and manual mode, send the corresponding command to ESP32 via MQTT and update the description text immediately for better user experience without waiting for ESP32 status sync
-        document.getElementById('modeControl').addEventListener('change', (e) => {
-            const isAuto = e.target.checked;
-            sendMqttCommand({ "manual_mode": !isAuto });
-        });
-
-        // logic of manual switch controls
-        document.getElementById('pumpControl').addEventListener('change', (e) => sendMqttCommand({ "manual_pump": e.target.checked }));
-        document.getElementById('fanControl').addEventListener('change', (e) => sendMqttCommand({ "manual_fan": e.target.checked }));
-        document.getElementById('lightControl').addEventListener('change', (e) => sendMqttCommand({ "manual_light": e.target.checked }));
+        document.getElementById('modeControl').onchange = (e) => send({ "manual_mode": !e.target.checked });
+        document.getElementById('pumpControl').onchange = (e) => send({ "manual_pump": e.target.checked });
+        document.getElementById('fanControl').onchange = (e) => send({ "manual_fan": e.target.checked });
+        document.getElementById('lightControl').onchange = (e) => send({ "manual_light": e.target.checked });
     </script>
 </body>
 </html>
