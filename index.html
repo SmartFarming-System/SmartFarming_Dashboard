@@ -17,40 +17,34 @@
             body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
 
             /*Design of Side Bar*/
-           /* --- 升级版侧边栏样式 --- */
         .sidebar { 
             height: 100%; width: 0; position: fixed; z-index: 2000; top: 0; left: 0; 
             background: linear-gradient(180deg, #1b4332 0%, #2d6a4f 100%); 
             overflow-x: hidden; 
-            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* 更加自然的缓动曲线 */
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 4px 0 15px rgba(0,0,0,0.2); 
         }
-
-        /* 侧边栏内容容器：开启时淡入 */
+            
         .sidebar-content { opacity: 0; transition: 0.3s; }
         .sidebar.active .sidebar-content { opacity: 1; }
 
-        /* 菜单选项：波浪式滑入效果 */
         .sidebar a { 
             padding: 18px 25px; text-decoration: none; font-size: 17px; color: rgba(255,255,255,0.8); 
             display: flex; align-items: center; gap: 15px; transition: 0.3s; border-left: 4px solid transparent;
-            transform: translateX(-20px); /* 初始位置偏左 */
+            transform: translateX(-20px); 
             opacity: 0;
         }
-
-        /* 当侧边栏拥有 .active 类时，触发选项滑入 */
+            
         .sidebar.active a { 
             transform: translateX(0); 
             opacity: 1; 
         }
 
-        /* 设置依次延迟，形成波浪感 */
         .sidebar.active a:nth-child(2) { transition-delay: 0.1s; }
         .sidebar.active a:nth-child(3) { transition-delay: 0.15s; }
         .sidebar.active a:nth-child(4) { transition-delay: 0.2s; }
         .sidebar.active a:nth-child(5) { transition-delay: 0.25s; }
 
-        /* 遮罩层：点击菜单外自动关闭 */
         .overlay {
             position: fixed; display: none; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); /* 毛玻璃效果 */
@@ -74,10 +68,9 @@
                 box-shadow: 0 10px 20px rgba(0,0,0,0.03); transition: 0.3s; text-align: center; width: 220px; 
             }
             
-            /* 鼠标悬浮卡片时的浮动动画 */
             .card:hover {
-                transform: translateY(-5px); /* 向上浮动 5px */
-                box-shadow: 0 15px 30px rgba(0,0,0,0.1); /* 阴影变大变柔和 */
+                transform: translateY(-5px); 
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
             }
 
             .value-container { display: flex; align-items: baseline; justify-content: center; margin: 5px 0; }
@@ -145,13 +138,11 @@
             gap: 12px; 
             }
             
-                /* 历史记录展开时的下拉淡入动画 */
             @keyframes dropdownFade {
                 from { opacity: 0; transform: translateY(-10px); }
                 to { opacity: 1; transform: translateY(0); }
             }
             
-            /* 配合 JavaScript 触发动画 */
             .log-details.show-grid {
                 display: grid !important;
                 animation: dropdownFade 0.3s ease-out forwards;
@@ -229,19 +220,18 @@
         font-weight: 700;
         }
         
-        /* 数据更新时的微微跳动变色动画 */
         @keyframes pulseUpdate {
             0% { transform: scale(1); color: var(--text); }
-            50% { transform: scale(1.1); color: var(--accent); } /* 瞬间变大一点点并变成强调色 */
+            50% { transform: scale(1.1); color: var(--accent); } 
             100% { transform: scale(1); color: var(--text); }
         }
         .value-updated {
             animation: pulseUpdate 0.5s ease-out;
         }
         
-        /* 🌟 Manual Mode 专属动画：三个按钮依次波浪式浮现 */
+        /* Manual mode button */
         #manualArea {
-            animation: fadeIn 0.3s ease-out; /* 整个手动区域的标题先平滑淡入 */
+            animation: fadeIn 0.3s ease-out; 
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -249,15 +239,13 @@
         }
 
         #manualArea .card {
-            opacity: 0; /* 卡片初始状态隐藏，等待排队出场 */
-            /* 复用你之前写好的 slideUp 动画，forwards 代表动画结束后保持显示状态 */
+            opacity: 0; 
             animation: slideUp 0.4s ease-out forwards; 
         }
-        
-        /* 核心魔法：设置不同的延迟时间 (Delay)，形成依次弹出的视觉差 */
-        #manualArea .card:nth-child(1) { animation-delay: 0.05s; } /* 水泵卡片 0.05秒后出 */
-        #manualArea .card:nth-child(2) { animation-delay: 0.15s; } /* 风扇卡片 0.15秒后出 */
-        #manualArea .card:nth-child(3) { animation-delay: 0.25s; } /* 灯光卡片 0.25秒后出 */
+    
+        #manualArea .card:nth-child(1) { animation-delay: 0.05s; } 
+        #manualArea .card:nth-child(2) { animation-delay: 0.15s; } 
+        #manualArea .card:nth-child(3) { animation-delay: 0.25s; } 
         
         
         </style>
@@ -371,8 +359,8 @@
             const overlay = document.getElementById("overlay");
             
             sidebar.style.width = window.innerWidth < 600 ? "80%" : "280px";
-            sidebar.classList.add("active"); // 触发链接滑入动画
-            overlay.style.display = "block"; // 显示毛玻璃遮罩
+            sidebar.classList.add("active"); 
+            overlay.style.display = "block"; 
         }
 
         function closeNav() { 
@@ -395,7 +383,7 @@
                   mqtt.onMessageArrived = (msg) => {
                               const d = JSON.parse(msg.payloadString);
                               if (msg.destinationName === CONFIG.topics.data) {
-                                  // 1. 更新数值
+                                  // update data
                                   document.getElementById('temp').innerText = d.temperature.toFixed(1);
                                   document.getElementById('hum').innerText = d.humidity;
                                   document.getElementById('soil').innerText = d.moisture;
@@ -403,11 +391,10 @@
                                   document.getElementById('waterLevel').innerText = d.tank_level;
                                   document.getElementById('waterAlert').style.display = d.tank_empty_alert ? "block" : "none";
                   
-                                  // 2. 触发动画：给所有数值加上跳动 class，0.5秒后移除以便下次继续触发
                                   const values = document.querySelectorAll('.value');
                                   values.forEach(v => {
                                       v.classList.remove('value-updated'); 
-                                      void v.offsetWidth; // 触发浏览器重绘的魔法代码，保证每次都能播放动画
+                                      void v.offsetWidth; 
                                       v.classList.add('value-updated');
                                   });
                               }
@@ -513,10 +500,8 @@
                     
                    item.onclick = () => {
                         const el = document.getElementById(`lg-${log.id}`);
-                        // 1. 核心修复：用 classList 触发我们写好的 CSS 动画
                         el.classList.toggle('show-grid');
                         
-                        // 2. 额外细节：让右边的箭头跟着一起旋转！
                         const icon = item.querySelector('.fa-chevron-down');
                         icon.style.transition = "transform 0.3s";
                         icon.style.transform = el.classList.contains('show-grid') ? "rotate(180deg)" : "rotate(0deg)";
