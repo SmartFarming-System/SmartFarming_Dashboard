@@ -32,6 +32,7 @@
             padding: 18px 25px; text-decoration: none; font-size: 17px; color: rgba(255,255,255,0.8); 
             display: flex; align-items: center; gap: 15px; transition: 0.3s; border-left: 4px solid transparent;
             transform: translateX(-20px); 
+            transform: translateX(-20px); 
             opacity: 0;
         }
 
@@ -69,8 +70,8 @@
             }
             
             .card:hover {
-                transform: translateY(-5px); /* 向上浮动 5px */
-                box-shadow: 0 15px 30px rgba(0,0,0,0.1); /* 阴影变大变柔和 */
+                transform: translateY(-5px); 
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
             }
 
             .value-container { display: flex; align-items: baseline; justify-content: center; margin: 5px 0; }
@@ -223,7 +224,7 @@
         /* when live data udpate - design */
         @keyframes pulseUpdate {
             0% { transform: scale(1); color: var(--text); }
-            50% { transform: scale(1.1); color: var(--accent); } /* 瞬间变大一点点并变成强调色 */
+            50% { transform: scale(1.1); color: var(--accent); } 
             100% { transform: scale(1); color: var(--text); }
         }
         .value-updated {
@@ -233,6 +234,7 @@
         /* Manual mode button*/
         #manualArea {
             animation: fadeIn 0.3s ease-out; 
+            animation: fadeIn 0.3s ease-out; 
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -240,6 +242,7 @@
         }
 
         #manualArea .card {
+            opacity: 0; 
             opacity: 0; 
             animation: slideUp 0.4s ease-out forwards; 
         }
@@ -362,6 +365,8 @@
             sidebar.style.width = window.innerWidth < 600 ? "80%" : "280px";
             sidebar.classList.add("active"); 
             overlay.style.display = "block"; 
+            sidebar.classList.add("active"); 
+            overlay.style.display = "block"; 
         }
 
         function closeNav() { 
@@ -385,6 +390,7 @@
                               const d = JSON.parse(msg.payloadString);
                               if (msg.destinationName === CONFIG.topics.data) {
                                   // update data
+                                  // update data
                                   document.getElementById('temp').innerText = d.temperature.toFixed(1);
                                   document.getElementById('hum').innerText = d.humidity;
                                   document.getElementById('soil').innerText = d.moisture;
@@ -395,6 +401,7 @@
                                   const values = document.querySelectorAll('.value');
                                   values.forEach(v => {
                                       v.classList.remove('value-updated'); 
+                                      void v.offsetWidth; 
                                       void v.offsetWidth; 
                                       v.classList.add('value-updated');
                                   });
