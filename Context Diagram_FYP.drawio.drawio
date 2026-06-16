@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="sCEsYFMOjktbgnTE94UR">
+    <mxGraphModel dx="1414" dy="823" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-14" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="LlnEo-sMphmvMNvhuM7k-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-17" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Live Dashboard Data, Filtered History Logs" vertex="1">
+          <mxGeometry relative="1" x="-0.3937" as="geometry">
+            <mxPoint x="-47" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-24" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="LlnEo-sMphmvMNvhuM7k-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-25" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-24" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Actuator Toggle Signals via EMQX" vertex="1">
+          <mxGeometry relative="1" x="0.281" y="3" as="geometry">
+            <mxPoint x="-34" y="17" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-33" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="LlnEo-sMphmvMNvhuM7k-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-34" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Data Storage Requests" vertex="1">
+          <mxGeometry relative="1" x="-0.4062" y="2" as="geometry">
+            <mxPoint x="30" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Smart Farming System" vertex="1">
+          <mxGeometry height="200" width="120" x="354" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-12" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="LlnEo-sMphmvMNvhuM7k-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-13" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-12" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Manual Control, History Search" vertex="1">
+          <mxGeometry relative="1" x="-0.3672" y="3" as="geometry">
+            <mxPoint x="28" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="User" vertex="1">
+          <mxGeometry height="60" width="120" x="10" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-18" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="220" as="sourcePoint" />
+            <mxPoint x="474" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-19" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-18" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Thresholds Configurations" vertex="1">
+          <mxGeometry relative="1" x="0.2031" y="-3" as="geometry">
+            <mxPoint x="54" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Admin" vertex="1">
+          <mxGeometry height="60" width="120" x="630" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-22" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;" target="LlnEo-sMphmvMNvhuM7k-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-23" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Raw Sensor Readings via EMQX" vertex="1">
+          <mxGeometry relative="1" x="-0.0446" y="1" as="geometry">
+            <mxPoint x="40" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="ESP32" vertex="1">
+          <mxGeometry height="60" width="120" x="20" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-29" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" target="LlnEo-sMphmvMNvhuM7k-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-30" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-29" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Historical Data Sets" vertex="1">
+          <mxGeometry relative="1" x="0.5243" y="3" as="geometry">
+            <mxPoint x="57" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Supabase" vertex="1">
+          <mxGeometry height="60" width="120" x="630" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-20" edge="1" parent="1" source="LlnEo-sMphmvMNvhuM7k-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.433;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="LlnEo-sMphmvMNvhuM7k-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LlnEo-sMphmvMNvhuM7k-21" connectable="0" parent="LlnEo-sMphmvMNvhuM7k-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="System Logs &amp;amp; Alerts" vertex="1">
+          <mxGeometry relative="1" x="-0.6124" y="-1" as="geometry">
+            <mxPoint x="36" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
