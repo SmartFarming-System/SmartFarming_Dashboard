@@ -52,11 +52,7 @@
             opacity: 0;
         }
 
-        .sidebar.active a { 
-            transform: translateX(0); 
-            opacity: 1; 
-        }
-
+        .sidebar.active a { transform: translateX(0); opacity: 1; }
         .sidebar.active a:nth-child(2) { transition-delay: 0.1s; }
         .sidebar.active a:nth-child(3) { transition-delay: 0.15s; }
         .sidebar.active a:nth-child(4) { transition-delay: 0.2s; }
@@ -86,10 +82,7 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.03); transition: 0.3s; text-align: center; width: 220px; 
         }
         
-        .card:hover {
-            transform: translateY(-5px); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
-        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
         .value-container { display: flex; align-items: baseline; justify-content: center; margin: 5px 0; }
         .value { font-size: 3rem; font-weight: 800; color: #2d3436; }
@@ -99,28 +92,25 @@
         .input-group { margin-bottom: 15px; }
         .input-group label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 5px; }
 
-        input[type="number"], input[type="text"], input[type="date"], input[type="time"], input[type="email"], input[type="password"] { 
-            width: 100%; 
-            height: 45px !important; 
-            padding: 0 10px !important; 
-            border-radius: 10px; 
-            border: 1px solid #ddd; 
-            outline: none; 
-            font-weight: 600; 
-            box-sizing: border-box; 
-            background: #ffffff !important; 
-            background-color: #ffffff !important;
-            color: var(--text) !important; 
-            opacity: 1 !important; 
+        input[type="number"], input[type="text"], input[type="date"], input[type="time"], input[type="email"], input[type="password"], select { 
+            width: 100%; height: 45px !important; padding: 0 10px !important; border-radius: 10px; 
+            border: 1px solid #ddd; outline: none; font-weight: 600; box-sizing: border-box; 
+            background: #ffffff !important; color: var(--text) !important; opacity: 1 !important; 
         }
+        
+        /* 隐藏日期时间选择器的图标 */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator { display: none !important; -webkit-appearance: none; }
+        
         input[type="date"]::-webkit-datetime-edit, input[type="time"]::-webkit-datetime-edit {
             display: flex !important; justify-content: center !important; align-items: center !important; height: 100% !important; padding: 0 !important;
         }
+        
         .btn-deploy { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
 
         .search-wrapper { max-width: 850px; margin: 0 auto 20px; display: flex; gap: 10px; position: relative; flex-wrap: wrap; justify-content: center; }
-        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text); z-index: 10; }
-        .search-wrapper input { flex: 1; min-width: 140px; padding: 12px 12px 12px 45px; }
+        .search-wrapper > i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text); z-index: 10; }
+        .search-wrapper input { flex: 1; min-width: 140px; padding: 12px 12px 12px 45px; text-align: center; }
         .search-wrapper input[type="time"] { padding-left: 12px; }
         .search-btn { background: var(--primary); color: white; border: none; padding: 0 25px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .search-btn:hover { background: #1b4332; }
@@ -147,14 +137,14 @@
             .page { padding: 90px 15px 30px; }
             .search-wrapper { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; }
             .search-wrapper span { display: flex; align-items: center; justify-content: center; height: 45px; font-size: 1.1rem; padding: 0 4px; }
-            .search-wrapper i { display: none; }
+            .search-wrapper > i { display: none; }
             #logSearchInput { grid-column: 1 / -1; padding-left: 12px; }
             #fromTimeInput { padding-left: 12px; }
             #toTimeInput { padding-left: 12px; }
-            .search-btn { grid-column: 1 / -1; padding: 0; margin-top: 5px; font-size: 1rem; height: 45px; }
-            /* Mobile tweaks for Add User form */
+            #actionBtns { grid-column: 1 / -1; margin-top: 5px; height: 45px; }
+            .search-btn { height: 100%; margin: 0; padding: 0; font-size: 1rem; }
             .add-user-form { flex-direction: column; }
-            .add-user-form input, .add-user-form select, .add-user-form button { width: 100% !important; }
+            .add-user-form input, .add-user-form select, .add-user-form button, .add-user-form .password-wrapper { width: 100% !important; }
         }
 
         .detail-box { display: flex; flex-direction: column; background: white; padding: 12px 10px; border-radius: 8px; text-align: center; border: 1px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.01); }
@@ -182,7 +172,10 @@
             </div>
             <div class="input-group" style="text-align: left;">
                 <label>Password</label>
-                <input type="password" id="authPassword" placeholder="Enter password">
+                <div style="position: relative;">
+                    <input type="password" id="authPassword" placeholder="Enter password" style="padding-right: 40px !important;">
+                    <i class="fas fa-eye" onclick="togglePassword('authPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
+                </div>
             </div>
             <button class="auth-btn" onclick="handleSignIn()">Sign In</button>
         </div>
@@ -275,7 +268,18 @@
             <input type="time" id="fromTimeInput" title="From Time">
             <span style="align-self: center; font-weight: bold; color: var(--text);">to</span>
             <input type="time" id="toTimeInput" title="To Time">
-            <button class="search-btn" onclick="filterLogs()">Search</button>
+            
+            <div id="actionBtns" style="display: flex; gap: 10px; flex: 1; min-width: 180px;">
+                <button class="search-btn" onclick="filterLogs()" style="flex: 1;">Search</button>
+                <button class="search-btn" onclick="printSelectedLogs()" style="flex: 1; background: #457b9d;" title="Print Selected Records">Print</button>
+            </div>
+        </div>
+
+        <div style="max-width: 600px; margin: 0 auto 15px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+            <label style="cursor: pointer; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="selectAllLogs" onclick="toggleAllLogs(this)" style="width: 18px; height: 18px !important; margin: 0; cursor: pointer; border-radius: 4px;"> Select All
+            </label>
+            <span id="selectedCount" style="font-size: 0.9rem; color: #666; font-weight: 600;">0 selected</span>
         </div>
 
         <div id="logContainer" style="max-width: 600px; margin: auto;">
@@ -292,7 +296,12 @@
                 <div class="add-user-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <input type="email" id="newEmail" placeholder="Email Address" style="flex: 2; min-width: 150px;">
                     <input type="text" id="newUsername" placeholder="Username" style="flex: 1.5; min-width: 120px;">
-                    <input type="password" id="newPassword" placeholder="Password (Min 6 chars)" style="flex: 1.5; min-width: 120px;">
+                    
+                    <div class="password-wrapper" style="flex: 1.5; min-width: 120px; position: relative;">
+                        <input type="password" id="newPassword" placeholder="Password (Min 6 chars)" style="width: 100% !important; padding-right: 35px !important;">
+                        <i class="fas fa-eye" onclick="togglePassword('newPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; z-index: 5;"></i>
+                    </div>
+
                     <select id="newRole" style="height: 45px; border-radius: 10px; border: 1px solid #ddd; padding: 0 10px; flex: 1; outline: none; font-weight: 600; background: #f8f9fa;">
                         <option value="user">USER</option>
                         <option value="admin">ADMIN</option>
@@ -311,6 +320,7 @@
 
     <script>
         let settingsInSync = false; 
+        let currentLogsData = []; 
 
         const CONFIG = {
             sbUrl: "https://dygrbyrpseknvkyshvir.supabase.co", 
@@ -323,7 +333,20 @@
         const sb = window.supabase.createClient(CONFIG.sbUrl, CONFIG.sbKey); 
         const mqtt = new Paho.MQTT.Client(CONFIG.mqttHost, 8084, "/mqtt", "web_" + Math.random().toString(16).slice(2,8));
 
-        // 🌟 登录分流函数（带安全吊销踢人机制）
+        // 🌟 新增：切换密码可见性的核心函数
+        function togglePassword(inputId, iconElement) {
+            const inputField = document.getElementById(inputId);
+            if (inputField.type === "password") {
+                inputField.type = "text"; // 变成明文
+                iconElement.classList.remove("fa-eye");
+                iconElement.classList.add("fa-eye-slash"); // 换成闭眼图标
+            } else {
+                inputField.type = "password"; // 变回星号
+                iconElement.classList.remove("fa-eye-slash");
+                iconElement.classList.add("fa-eye"); // 换回睁眼图标
+            }
+        }
+
         async function handleSignIn() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
@@ -340,13 +363,12 @@
                 return;
             }
 
-            // 🌟 核心安保升级：去查数据库，如果他被删了，就踢出去！
             const { data: userData, error: userError } = await sb.from('users').select('role').eq('email', email).single();
             
             if (!userData) {
                 alert("Access Denied: Your account has been removed or deactivated by the Administrator.");
-                await sb.auth.signOut(); // 强制登出
-                return; // 直接掐断，进不去系统
+                await sb.auth.signOut(); 
+                return; 
             }
 
             let userRole = userData.role; 
@@ -377,6 +399,12 @@
             await sb.auth.signOut();
             document.getElementById('authEmail').value = "";
             document.getElementById('authPassword').value = "";
+            // 登出时如果密码被点开了，把它重置回星号状态
+            const authPw = document.getElementById('authPassword');
+            if (authPw.type === "text") {
+                authPw.type = "password";
+                authPw.nextElementSibling.classList.replace("fa-eye-slash", "fa-eye");
+            }
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById('authPage').style.display = 'flex';
         }
@@ -478,12 +506,17 @@
                 list.innerHTML = `<p style="text-align: center; color: red;">Error: ${error.message}</p>`;
                 return;
             }
+            
+            currentLogsData = data; 
             renderLogs(data);
         }
 
         function renderLogs(logs) {
             const list = document.getElementById('logContainer');
             list.innerHTML = "";
+            document.getElementById('selectAllLogs').checked = false; 
+            updateSelectedCount(); 
+
             if (logs.length === 0) {
                 list.innerHTML = `<p style="text-align: center;">No records found for this range.</p>`;
                 return;
@@ -492,11 +525,14 @@
                 const item = document.createElement('div');
                 item.className = "log-item";
                 const d = new Date(log.created_at);
-                const formattedTime = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}, ${d.toLocaleTimeString()}`;
+                const formattedTime = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${d.toLocaleTimeString()}`;
 
                 item.innerHTML = `
-                    <div style="display:flex; justify-content:space-between;">
-                        <strong> ${formattedTime}</strong>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap: 12px;">
+                            <input type="checkbox" class="log-checkbox" value="${log.id}" onclick="event.stopPropagation(); updateSelectedCount();" style="width: 18px; height: 18px !important; margin: 0; cursor: pointer; border-radius: 4px;">
+                            <strong> ${formattedTime}</strong>
+                        </div>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="log-details" id="lg-${log.id}">
@@ -534,6 +570,20 @@
             });
         }
 
+        function toggleAllLogs(source) {
+            const checkboxes = document.querySelectorAll('.log-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.log-checkbox:checked').length;
+            document.getElementById('selectedCount').innerText = `${count} selected`;
+            
+            const total = document.querySelectorAll('.log-checkbox').length;
+            document.getElementById('selectAllLogs').checked = (count === total && total > 0);
+        }
+
         function filterLogs() {
             const rawInput = document.getElementById('logSearchInput').value;
             const dateVal = (rawInput && String(rawInput).trim() !== "") ? String(rawInput).trim() : "";
@@ -544,7 +594,88 @@
             loadLogs(dateVal, fromVal, toVal);
         }
 
-        // 🌟 核心：从 Supabase users 表动态拉取真实数据，带 Delete 按钮
+        function printSelectedLogs() {
+            const checkedBoxes = document.querySelectorAll('.log-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert("Please tick the checkbox beside the records you wish to print.");
+                return;
+            }
+
+            const selectedIds = Array.from(checkedBoxes).map(cb => String(cb.value));
+            const dataToPrint = currentLogsData.filter(log => selectedIds.includes(String(log.id)));
+            const searchDate = document.getElementById('logSearchInput').value || "All Time Records";
+            
+            let printHtml = `
+            <html>
+            <head>
+                <title>Smart Farming Report</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; padding: 30px; color: #333; }
+                    .header { text-align: center; border-bottom: 2px solid #2d6a4f; padding-bottom: 15px; margin-bottom: 20px; }
+                    .header h1 { color: #2d6a4f; margin: 0 0 10px 0; font-size: 24px; }
+                    .header p { margin: 0 0 5px 0; font-size: 14px; color: #555; }
+                    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 20px; }
+                    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+                    th { background-color: #2d6a4f; color: white; }
+                    tr:nth-child(even) { background-color: #f9f9f9; }
+                    .footer { margin-top: 40px; text-align: right; font-size: 12px; color: #999; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>Smart Farming - Selected Data Report</h1>
+                    <p><strong>Query Date:</strong> ${searchDate}</p>
+                    <p><strong>Records Printed:</strong> ${dataToPrint.length}</p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Temp (°C)</th>
+                            <th>Humidity (%)</th>
+                            <th>Soil Moisture (%)</th>
+                            <th>Light (Lux)</th>
+                            <th>Water Level (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            dataToPrint.forEach(log => {
+                const d = new Date(log.created_at);
+                const timeStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${d.toLocaleTimeString()}`;
+                printHtml += `
+                    <tr>
+                        <td>${timeStr}</td>
+                        <td>${log.temperature}</td>
+                        <td>${log.humidity}</td>
+                        <td>${log.soil_moisture}</td>
+                        <td>${log.light_lux}</td>
+                        <td>${log.water_level}</td>
+                    </tr>
+                `;
+            });
+
+            printHtml += `
+                    </tbody>
+                </table>
+                <div class="footer">Report Generated securely by Smart Farming System on: ${new Date().toLocaleString()}</div>
+            </body>
+            </html>
+            `;
+
+            const printWin = window.open('', '_blank');
+            printWin.document.write(printHtml);
+            printWin.document.close();
+            
+            setTimeout(() => {
+                printWin.focus();
+                printWin.print();
+            }, 250);
+        }
+
         async function loadRealUsers() {
             const container = document.getElementById('userTableContainer');
             
@@ -593,10 +724,9 @@
             container.innerHTML = html;
         }
 
-        // 🌟 新增：管理员在网页里直接开通新账号
         async function createNewUser() {
-            const email = document.getElementById('newEmail').value;
-            const username = document.getElementById('newUsername').value;
+            const email = document.getElementById('newEmail').value.trim();
+            const username = document.getElementById('newUsername').value.trim();
             const password = document.getElementById('newPassword').value;
             const role = document.getElementById('newRole').value;
 
@@ -609,19 +739,14 @@
                 return;
             }
 
-            const { data: authData, error: authError } = await sb.auth.signUp({
-                email: email,
-                password: password
-            });
+            const { data: authData, error: authError } = await sb.auth.signUp({ email: email, password: password });
 
             if(authError) {
                 alert("Failed to create account: " + authError.message);
                 return;
             }
 
-            const { error: dbError } = await sb.from('users').insert([
-                { email: email, username: username, role: role }
-            ]);
+            const { error: dbError } = await sb.from('users').insert([{ email: email, username: username, role: role }]);
 
             if(dbError) {
                 alert("Account created, but failed to save role: " + dbError.message);
@@ -633,28 +758,31 @@
             document.getElementById('newUsername').value = "";
             document.getElementById('newPassword').value = "";
             
+            // 成功后如果密码是明文展示的，重置为星号
+            const npInput = document.getElementById('newPassword');
+            if (npInput.type === "text") {
+                npInput.type = "password";
+                npInput.nextElementSibling.classList.replace("fa-eye-slash", "fa-eye");
+            }
+            
             loadRealUsers();
         }
 
-        // 🌟 新增：删除用户（吊销权限）功能
         async function deleteUser(userId, userEmail) {
-            // 🚨 防呆机制：防止管理员手滑把自己给删了
             const currentAdminEmail = document.getElementById('authEmail').value;
             if (userEmail === currentAdminEmail) {
                 alert("Action Denied: You cannot delete your own admin account!");
                 return;
             }
 
-            // 弹窗再次确认
             if (confirm(`Are you absolutely sure you want to delete user: ${userEmail}?\nThey will immediately lose access to the system.`)) {
-                // 去数据库删掉这行数据
                 const { error } = await sb.from('users').delete().eq('id', userId);
                 
                 if (error) {
                     alert("Failed to delete user: " + error.message);
                 } else {
                     alert(`Success! User [${userEmail}] has been removed.`);
-                    loadRealUsers(); // 瞬间刷新表格
+                    loadRealUsers(); 
                 }
             }
         }
