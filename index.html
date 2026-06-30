@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- To makesure the webpage layout wisely in every platform -->
         <title>Smart Farming System - Dashboard</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script> 
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script> <!--connect to CQMX-->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> <!-- connect to Supabase -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Take icon from here -->
     
     <style>
         :root {
@@ -159,7 +159,7 @@
     </style>
 </head>
 <body>
-    <div id="authPage" class="auth-container">
+    <div id="authPage" class="auth-container"> <!-- sign in page -->
         <div class="auth-card">
             <h2><i class="fas fa-leaf"></i> Smart Farming Center</h2>
             <div class="input-group" style="text-align: left;">
@@ -177,7 +177,7 @@
         </div>
     </div>
 
-    <div id="overlay" class="overlay" onclick="closeNav()"></div>
+    <div id="overlay" class="overlay" onclick="closeNav()"></div> <!-- Side bar page  -->
     <div id="mySidebar" class="sidebar">
         <div class="sidebar-content"> 
             <div class="sidebar-header"><i class="fas fa-leaf fa-2x"></i><h3>Smart Farming System</h3></div>
@@ -192,7 +192,7 @@
         </div>
     </div>
 
-    <div class="nav-header">
+    <div class="nav-header"> <!-- Main page -->
         <div style="display:flex; align-items:center;">
             <div class="menu-btn" onclick="openNav()"><i class="fas fa-bars"></i></div>
             <div class="nav-title">Smart Farming Control Center</div>
@@ -207,12 +207,12 @@
             <div class="card"><i class="fas fa-seedling"></i><h3>Soil Moisture</h3><div class="value-container"><span id="soil" class="value">--</span><span class="unit">%</span></div></div>
             <div class="card"><i class="fas fa-sun"></i><h3>Light Lux</h3><div class="value-container"><span id="light" class="value">--</span><span class="unit">Lx</span></div></div>
             <div class="card"><i class="fas fa-water"></i><h3>Water Level</h3><div class="value-container"><span id="waterLevel" class="value">--</span><span class="unit">%</span></div>
-                <div id="waterAlert" style="display:none; color:red; font-weight:bold; font-size:0.7rem; margin-top:10px;">⚠️ LOW WATER</div>
+                <div id="waterAlert" style="display:none; color:red; font-weight:bold; font-size:0.7rem; margin-top:10px;"> LOW WATER</div>
             </div>
         </div>
     </div>
 
-    <div id="page2" class="page">
+    <div id="page2" class="page"> <!-- Mode control  -->
         <div class="card" style="max-width: 400px; margin: 0 auto 50px; border-top: 6px solid var(--accent);">
             <h3 id="modeTitle">Automatic Mode</h3>
             <label class="switch"><input type="checkbox" id="modeControl" checked><span class="slider"></span></label>
@@ -228,7 +228,7 @@
         </div>
     </div>
 
-    <div id="page3" class="page">
+    <div id="page3" class="page"> <!-- Configurations part -->
         <h2 style="text-align: center;">Configurations</h2>
         <div class="grid">
             <div class="card setting-card">
@@ -255,7 +255,7 @@
         <div style="text-align: center; margin-top: 40px;"><button class="btn-deploy" onclick="deploy()"> Deploy Settings</button></div>
     </div>
 
-    <div id="page4" class="page">
+    <div id="page4" class="page"> <!-- Check history logs -->
         <h2 style="text-align: center;">History Records</h2>
         
         <div class="search-wrapper">
@@ -283,7 +283,7 @@
         </div>
     </div>
 
-    <div id="adminPage" class="page">
+    <div id="adminPage" class="page"> <!-- Admin first page  -->
         <h2 style="text-align: center;">System Users Management</h2>
         
         <div style="max-width: 900px; margin: auto;">
@@ -329,21 +329,21 @@
         const sb = window.supabase.createClient(CONFIG.sbUrl, CONFIG.sbKey); 
         const mqtt = new Paho.MQTT.Client(CONFIG.mqttHost, 8084, "/mqtt", "web_" + Math.random().toString(16).slice(2,8));
 
-        // 🌟 新增：切换密码可见性的核心函数
+        // admin key in password
         function togglePassword(inputId, iconElement) {
             const inputField = document.getElementById(inputId);
             if (inputField.type === "password") {
-                inputField.type = "text"; // 变成明文
+                inputField.type = "text"; // show password
                 iconElement.classList.remove("fa-eye");
-                iconElement.classList.add("fa-eye-slash"); // 换成闭眼图标
+                iconElement.classList.add("fa-eye-slash"); // close 
             } else {
-                inputField.type = "password"; // 变回星号
-                iconElement.classList.remove("fa-eye-slash");
-                iconElement.classList.add("fa-eye"); // 换回睁眼图标
+                inputField.type = "password"; // off password
+                iconElement.classList.remove("fa-eye-slash"); 
+                iconElement.classList.add("fa-eye"); // change to the eye open
             }
         }
 
-        async function handleSignIn() {
+        async function handleSignIn() { // User signin part, will sign in based to the email is role admin or user
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
 
@@ -395,7 +395,6 @@
             await sb.auth.signOut();
             document.getElementById('authEmail').value = "";
             document.getElementById('authPassword').value = "";
-            // 登出时如果密码被点开了，把它重置回星号状态
             const authPw = document.getElementById('authPassword');
             if (authPw.type === "text") {
                 authPw.type = "password";
@@ -430,7 +429,7 @@
             if(id === 'page4') loadLogs();
         }
 
-        mqtt.onMessageArrived = (msg) => {
+        mqtt.onMessageArrived = (msg) => { //Real time data from MQTT
             const d = JSON.parse(msg.payloadString);
             if (msg.destinationName === CONFIG.topics.data) {
                 document.getElementById('temp').innerText = d.temperature.toFixed(1);
@@ -444,7 +443,7 @@
                 values.forEach(v => {
                     v.classList.remove('value-updated'); 
                     void v.offsetWidth; 
-                    v.classList.add('value-updated');
+                    v.classList.add('value-updated'); // after data renew will show the animation
                 });
             }
             if (msg.destinationName === CONFIG.topics.status) syncUI(d);
@@ -470,7 +469,7 @@
                 document.getElementById('inputLightOn').value = d.light_on;
                 document.getElementById('inputLightSpace').value = d.light_space;
             }
-
+            // check the status of mode control and packed into JSON and sync to hardware 
             document.getElementById('pumpControl').checked = d.manual_pump;
             document.getElementById('pumpStatus').innerText = d.manual_pump ? "ON" : "OFF";
             document.getElementById('fanControl').checked = d.manual_fan;
@@ -479,7 +478,7 @@
             document.getElementById('lightStatus').innerText = d.manual_light ? "ON" : "OFF";
         }
 
-        async function loadLogs(searchDate = "", fromTime = "", toTime = "") {
+        async function loadLogs(searchDate = "", fromTime = "", toTime = "") { // Sync the data from Supabase sensor_logs table 
             const list = document.getElementById('logContainer');
             list.innerHTML = `<p style="text-align: center;">Executing SQL Query...</p>`;
             
@@ -494,7 +493,7 @@
                     start = `${searchDate} 00:00:00`;
                     end = `${searchDate} 23:59:59`;
                 }
-                query = query.gte('created_at', start).lte('created_at', end);
+                query = query.gte('created_at', start).lte('created_at', end); // to filter the date and time that user pick
             }
 
             const { data, error } = await query;
@@ -602,7 +601,7 @@
             const dataToPrint = currentLogsData.filter(log => selectedIds.includes(String(log.id)));
             const searchDate = document.getElementById('logSearchInput').value || "All Time Records";
             
-            let printHtml = `
+            let printHtml = ` // pdf output of history logs
             <html>
             <head>
                 <title>Smart Farming Report</title>
@@ -672,7 +671,7 @@
             }, 250);
         }
 
-        async function loadRealUsers() {
+        async function loadRealUsers() { // load all account details 
             const container = document.getElementById('userTableContainer');
             
             const { data, error } = await sb.from('users').select('*').order('id', { ascending: true });
@@ -735,7 +734,7 @@
                 return;
             }
 
-            const { data: authData, error: authError } = await sb.auth.signUp({ email: email, password: password });
+            const { data: authData, error: authError } = await sb.auth.signUp({ email: email, password: password }); // after admin sign up email account will into Supabase secure, and encrypted authentication engine
 
             if(authError) {
                 alert("Failed to create account: " + authError.message);
@@ -754,7 +753,6 @@
             document.getElementById('newUsername').value = "";
             document.getElementById('newPassword').value = "";
             
-            // 成功后如果密码是明文展示的，重置为星号
             const npInput = document.getElementById('newPassword');
             if (npInput.type === "text") {
                 npInput.type = "password";
@@ -766,12 +764,12 @@
 
         async function deleteUser(userId, userEmail) {
             const currentAdminEmail = document.getElementById('authEmail').value;
-            if (userEmail === currentAdminEmail) {
+            if (userEmail === currentAdminEmail) { // to prevent admin delete own account
                 alert("Action Denied: You cannot delete your own admin account!");
                 return;
             }
 
-            if (confirm(`Are you absolutely sure you want to delete user: ${userEmail}?\nThey will immediately lose access to the system.`)) {
+            if (confirm(`Are you absolutely sure you want to delete user: ${userEmail}?\nThey will immediately lose access to the system.`)) { //delete user account
                 const { error } = await sb.from('users').delete().eq('id', userId);
                 
                 if (error) {
