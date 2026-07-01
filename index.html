@@ -359,7 +359,14 @@
                 return;
             }
 
-            const { data: userData, error: userError } = await sb.from('users').select('role').eq('email', email).single();
+            // 💡 核心修改：先查管理员实体表
+          let { data: userData, error: userError } = await sb.from('admin_users').select('role').eq('email', email).single();
+
+            // 💡 如果管理员表找不到，再去普通员工实体表检索
+                if (!userData) {
+              const { data: standardData, error: standardError } = await sb.from('standard_users').select('role').eq('email', email).single();
+              userData = standardData;
+          }
             
             if (!userData) {
                 alert("Access Denied: Your account has been removed or deactivated by the Administrator.");
@@ -478,33 +485,57 @@
             document.getElementById('lightStatus').innerText = d.manual_light ? "ON" : "OFF";
         }
 
-        async function loadLogs(searchDate = "", fromTime = "", toTime = "") { // Sync the data from Supabase sensor_logs table 
-            const list = document.getElementById('logContainer');
-            list.innerHTML = `<p style="text-align: center;">Executing SQL Query...</p>`;
-            
-            let query = sb.from('sensor_logs').select('*').order('created_at', { ascending: false });
+                        async function loadLogs(searchDate = "", fromTime = "", toTime = "") {
+                      const list = document.getElementById('logContainer');
+                      list.innerHTML = `<p style="text-align: center;">Executing Distributed Client JOIN...</p>`;
 
-            if (searchDate && searchDate.trim() !== "") {
-                let start, end;
-                if (fromTime && toTime) {
-                    start = `${searchDate} ${fromTime}:00`;
-                    end = `${searchDate} ${toTime}:59`;
-                } else {
-                    start = `${searchDate} 00:00:00`;
-                    end = `${searchDate} 23:59:59`;
-                }
-                query = query.gte('created_at', start).lte('created_at', end); // to filter the date and time that user pick
-            }
+                      // 💡 1. 建立 4 张垂直传感器子表的独立查询流
+                      let qAir = sb.from('air_logs').select('*').order('created_at', { ascending: false });
+                      let qSoil = sb.from('soil_logs').select('*');
+                      let qLight = sb.from('light_logs').select('*');
+                      let qWater = sb.from('water_logs').select('*');
 
-            const { data, error } = await query;
-            if(error) {
-                list.innerHTML = `<p style="text-align: center; color: red;">Error: ${error.message}</p>`;
-                return;
-            }
-            
-            currentLogsData = data; 
-            renderLogs(data);
-        }
+                      if (searchDate && searchDate.trim() !== "") {
+                          let start = fromTime && toTime ? `${searchDate} ${fromTime}:00` : `${searchDate} 00:00:00`;
+                          let end = fromTime && toTime ? `${searchDate} ${toTime}:59` : `${searchDate} 23:59:59`;
+
+                          qAir = qAir.gte('created_at', start).lte('created_at', end);
+                          qSoil = qSoil.gte('created_at', start).lte('created_at', end);
+                          qLight = qLight.gte('created_at', start).lte('created_at', end);
+                          qWater = qWater.gte('created_at', start).lte('created_at', end);
+                      }
+
+                      // 💡 2. 向云端发起高性能前端并发多路网络请求
+                      const [resAir, resSoil, resLight, resWater] = await Promise.all([qAir, qSoil, qLight, qWater]);
+
+                      if (resAir.error || resSoil.error || resLight.error || resWater.error) {
+                          list.innerHTML = `<p style="text-align: center; color: red;">Error: Telemetry Sync Failed.</p>`;
+                          return;
+                      }
+
+                      // 💡 3. 前端核心时序等值拼接核心算法 (Time-series Stitching Algorithm)
+                      const compiledLogs = resAir.data.map(air => {
+                          const airTimestamp = new Date(air.created_at).setMilliseconds(0); // 抹平微秒级偏差，秒级精准对齐
+
+                          // 贪婪匹配相同秒数时间戳的其他物理子表记录
+                          const matchSoil = resSoil.data.find(s => new Date(s.created_at).setMilliseconds(0) === airTimestamp) || {};
+                          const matchLight = resLight.data.find(l => new Date(l.created_at).setMilliseconds(0) === airTimestamp) || {};
+                          const matchWater = resWater.data.find(w => new Date(w.created_at).setMilliseconds(0) === airTimestamp) || {};
+
+                          return {
+                              id: air.id,
+                              created_at: air.created_at,
+                              temperature: air.temperature,
+                              humidity: air.humidity,
+                              soil_moisture: matchSoil.soil_moisture !== undefined ? matchSoil.soil_moisture : "--",
+                              light_lux: matchLight.light_lux !== undefined ? matchLight.light_lux : "--",
+                              water_level: matchWater.water_level !== undefined ? matchWater.water_level : "--"
+                          };
+                      });
+
+                      currentLogsData = compiledLogs; 
+                      renderLogs(compiledLogs);
+                  }
 
         function renderLogs(logs) {
             const list = document.getElementById('logContainer');
@@ -675,7 +706,17 @@
         async function loadRealUsers() { // load all account details 
             const container = document.getElementById('userTableContainer');
             
-            const { data, error } = await sb.from('users').select('*').order('id', { ascending: true });
+                          // 💡 核心修改：并发拉取分立的两张账户底表
+              const { data: admins, error: err1 } = await sb.from('admin_users').select('*');
+              const { data: standards, error: err2 } = await sb.from('standard_users').select('*');
+
+              if (err1 || err2) {
+                  container.innerHTML = `<p style="text-align: center; color: red;">Error: Fetching users failed.</p>`;
+                  return;
+              }
+
+              // 💡 前端内存数组合体，并升序排列
+              const data = [...(admins || []), ...(standards || [])].sort((a, b) => a.id - b.id);
 
             if (error) {
                 container.innerHTML = `<p style="text-align: center; color: red;">Error: ${error.message}</p>`;
@@ -742,7 +783,15 @@
                 return;
             }
 
-            const { error: dbError } = await sb.from('users').insert([{ email: email, username: username, role: role }]);
+                        // 💡 核心修改：前端根据 role 判断分流写入
+            let dbError;
+            if (role === 'admin') {
+                const { error } = await sb.from('admin_users').insert([{ email: email, username: username, role: 'admin' }]);
+                dbError = error;
+            } else {
+                const { error } = await sb.from('standard_users').insert([{ email: email, username: username, role: 'user' }]);
+                dbError = error;
+            }
 
             if(dbError) {
                 alert("Account created, but failed to save role: " + dbError.message);
@@ -771,7 +820,10 @@
             }
 
             if (confirm(`Are you absolutely sure you want to delete user: ${userEmail}?\nThey will immediately lose access to the system.`)) { //delete user account
-                const { error } = await sb.from('users').delete().eq('id', userId);
+                                    // 💡 核心修改：串行向两张实体表发布删除广播
+                    const { error: err1 } = await sb.from('admin_users').delete().eq('id', userId);
+                    const { error: err2 } = await sb.from('standard_users').delete().eq('id', userId);
+                    const error = err1 || err2;
                 
                 if (error) {
                     alert("Failed to delete user: " + error.message);
