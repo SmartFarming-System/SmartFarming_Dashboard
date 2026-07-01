@@ -360,11 +360,11 @@
             }
 
             // 💡 核心修改：先查管理员实体表
-          let { data: userData, error: userError } = await sb.from('admin_users').select('role').eq('email', email).single();
+          let { data: userData, error: userError } = await sb.from('admins').select('role').eq('email', email).single();
 
             // 💡 如果管理员表找不到，再去普通员工实体表检索
                 if (!userData) {
-              const { data: standardData, error: standardError } = await sb.from('standard_users').select('role').eq('email', email).single();
+              const { data: standardData, error: standardError } = await sb.from('users').select('role').eq('email', email).single();
               userData = standardData;
           }
             
@@ -707,8 +707,8 @@
             const container = document.getElementById('userTableContainer');
             
                           // 💡 核心修改：并发拉取分立的两张账户底表
-              const { data: admins, error: err1 } = await sb.from('admin_users').select('*');
-              const { data: standards, error: err2 } = await sb.from('standard_users').select('*');
+              const { data: admins, error: err1 } = await sb.from('admins').select('*');
+              const { data: standards, error: err2 } = await sb.from('users').select('*');
 
               if (err1 || err2) {
                   container.innerHTML = `<p style="text-align: center; color: red;">Error: Fetching users failed.</p>`;
@@ -781,10 +781,10 @@
                         // 💡 核心修改：前端根据 role 判断分流写入
             let dbError;
             if (role === 'admin') {
-                const { error } = await sb.from('admin_users').insert([{ email: email, username: username, role: 'admin' }]);
+                const { error } = await sb.from('admins').insert([{ email: email, username: username, role: 'admin' }]);
                 dbError = error;
             } else {
-                const { error } = await sb.from('standard_users').insert([{ email: email, username: username, role: 'user' }]);
+                const { error } = await sb.from('users').insert([{ email: email, username: username, role: 'user' }]);
                 dbError = error;
             }
 
@@ -816,8 +816,8 @@
 
             if (confirm(`Are you absolutely sure you want to delete user: ${userEmail}?\nThey will immediately lose access to the system.`)) { //delete user account
                                     // 💡 核心修改：串行向两张实体表发布删除广播
-                    const { error: err1 } = await sb.from('admin_users').delete().eq('id', userId);
-                    const { error: err2 } = await sb.from('standard_users').delete().eq('id', userId);
+                    const { error: err1 } = await sb.from('admins').delete().eq('id', userId);
+                    const { error: err2 } = await sb.from('users').delete().eq('id', userId);
                     const error = err1 || err2;
                 
                 if (error) {
