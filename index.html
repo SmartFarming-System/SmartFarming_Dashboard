@@ -601,7 +601,8 @@
             const dataToPrint = currentLogsData.filter(log => selectedIds.includes(String(log.id)));
             const searchDate = document.getElementById('logSearchInput').value || "All Time Records";
             
-            let printHtml = ` // pdf output of history logs
+            // pdf output of history logs
+            let printHtml = ` 
             <html>
             <head>
                 <title>Smart Farming Report</title>
