@@ -187,7 +187,7 @@
             <a href="#" id="navMode" class="nav-link" onclick="showPage('page2', this)"><i class="fas fa-sliders-h"></i> Mode Control</a>
             <a href="#" id="navThresh" class="nav-link" onclick="showPage('page3', this)"><i class="fas fa-bullseye"></i> Thresholds</a>
             <a href="#" id="navHist" class="nav-link" onclick="showPage('page4', this)"><i class="fas fa-history"></i> History Data</a>
-            
+            <a href="#" id="navContact" class="nav-link" onclick="showPage('contactPage', this)"><i class="fas fa-headset"></i> Contact Us</a>
             <a href="#" id="navAdmin" class="nav-link" style="display:none;" onclick="showPage('adminPage', this)"><i class="fas fa-users"></i> User Details</a>
         </div>
     </div>
@@ -283,29 +283,51 @@
         </div>
     </div>
 
+    <div id="contactPage" class="page">
+     <div style="max-width: 650px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center;">
+        <h2 style="color: var(--primary); margin-top: 0;"><i class="fas fa-headset"></i> Contact Admin</h2>
+
+        <div id="contactUnbound" style="display:none;">
+            <p style="font-weight: 600; color: #555;">Your account has not been assigned to any device yet.</p>
+            <p style="color: #666;">Please contact the system administrator to assign a device before using the dashboard.</p>
+        </div>
+
+        <p style="font-weight: bold; color: var(--text); margin-top: 25px;">Email: admin123@gmail.com</p>
+    </div>
+
+</div>
+
     <div id="adminPage" class="page"> <!-- Admin first page  -->
         <h2 style="text-align: center;">System Users Management</h2>
         
         <div style="max-width: 900px; margin: auto;">
-            <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 6px solid var(--accent);">
-                <h4 style="margin-top: 0; color: var(--text);"><i class="fas fa-user-plus"></i> Register New User</h4>
-                <div class="add-user-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <input type="email" id="newEmail" placeholder="Email Address" style="flex: 2; min-width: 150px;">
-                    <input type="text" id="newUsername" placeholder="Username" style="flex: 1.5; min-width: 120px;">
-                    
-                    <div class="password-wrapper" style="flex: 1.5; min-width: 120px; position: relative;">
-                        <input type="password" id="newPassword" placeholder="Password (Min 6 chars)" style="width: 100% !important; padding-right: 35px !important;">
-                        <i class="fas fa-eye" onclick="togglePassword('newPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; z-index: 5;"></i>
-                    </div>
+    <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 6px solid var(--accent);">
+        <h4 style="margin-top: 0; color: var(--text);"><i class="fas fa-user-plus"></i> Register New User</h4>
+        <div class="add-user-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="email" id="newEmail" placeholder="Email Address" style="flex: 2; min-width: 150px;">
+            <input type="text" id="newUsername" placeholder="Username" style="flex: 1.5; min-width: 120px;">
 
-                    <select id="newRole" style="height: 45px; border-radius: 10px; border: 1px solid #ddd; padding: 0 10px; flex: 1; outline: none; font-weight: 600; background: #f8f9fa;">
-                        <option value="user">USER</option>
-                        <option value="admin">ADMIN</option>
-                    </select>
-                    <button onclick="createNewUser()" style="background: var(--primary); color: white; border: none; height: 45px; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; min-width: 100px;">Add</button>
-                </div>
+            <div class="password-wrapper" style="flex: 1.5; min-width: 120px; position: relative;">
+                <input type="password" id="newPassword" placeholder="Password (Min 6 chars)" style="width: 100% !important; padding-right: 35px !important;">
+                <i class="fas fa-eye" onclick="togglePassword('newPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; z-index: 5;"></i>
             </div>
 
+            <select id="newRole" style="height: 45px; border-radius: 10px; border: 1px solid #ddd; padding: 0 10px; flex: 1; outline: none; font-weight: 600; background: #f8f9fa;">
+                <option value="user">USER</option>
+                <option value="admin">ADMIN</option>
+            </select>
+            <button onclick="createNewUser()" style="background: var(--primary); color: white; border: none; height: 45px; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; min-width: 100px;">Add</button>
+        </div>
+    </div>
+
+    <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 6px solid var(--primary);">
+        <h4 style="margin-top: 0; color: var(--text);"><i class="fas fa-microchip"></i> Register New Device</h4>
+        <div class="add-user-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="number" id="newDeviceId" placeholder="Device ID e.g. 2" style="flex: 1; min-width: 140px;">
+            <input type="text" id="newDeviceName" placeholder="Device Name e.g. ESP 32(Node 2)" style="flex: 2; min-width: 180px;">
+            <button onclick="createNewDevice()" style="background: var(--primary); color: white; border: none; height: 45px; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; min-width: 120px;">Add Device</button>
+        </div>
+    </div>
             <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
                 <div id="userTableContainer" style="overflow-x: auto;">
                     <p style="text-align: center;">Fetching Live Database...</p>
@@ -315,6 +337,7 @@
     </div>
 
     <script>
+        let currentUserDeviceId = null;
         let settingsInSync = false; 
         let currentLogsData = []; 
 
@@ -323,11 +346,50 @@
             sbKey: "sb_publishable_w9VXjh53E637ngwGo-3w0w_IgyC4rwA", 
             mqttHost: "vb41b58d.ala.asia-southeast1.emqxsl.com", 
             user: "Esp32", pass: "Esp32_32",
-            topics: { data: "sfs/node_1/sensors/data", set: "sfs/node_1/sensors/settings", status: "sfs/node_1/sensors/status" }
+            topics: { data: "", set: "", status: "" }
         };
 
         const sb = window.supabase.createClient(CONFIG.sbUrl, CONFIG.sbKey); 
         const mqtt = new Paho.MQTT.Client(CONFIG.mqttHost, 8084, "/mqtt", "web_" + Math.random().toString(16).slice(2,8));
+                
+                let mqttReady = false;
+        let subscribedTopics = { data: null, status: null };
+
+        function setDeviceTopics(deviceId) {
+            CONFIG.topics = {
+                data: `sfs/node_${deviceId}/sensors/data`,
+                set: `sfs/node_${deviceId}/sensors/settings`,
+                status: `sfs/node_${deviceId}/sensors/status`
+            };
+        }
+
+        function subscribeDeviceTopics() {
+            if (!mqttReady || !currentUserDeviceId) return;
+
+            if (subscribedTopics.data) mqtt.unsubscribe(subscribedTopics.data);
+            if (subscribedTopics.status) mqtt.unsubscribe(subscribedTopics.status);
+
+            setDeviceTopics(currentUserDeviceId);
+
+            mqtt.subscribe(CONFIG.topics.data);
+            mqtt.subscribe(CONFIG.topics.status);
+
+            subscribedTopics = {
+                data: CONFIG.topics.data,
+                status: CONFIG.topics.status
+            };
+
+            console.log("Subscribed device topics:", subscribedTopics);
+        }
+
+        function resetDashboardValues() {
+            document.getElementById('temp').innerText = "--";
+            document.getElementById('hum').innerText = "--";
+            document.getElementById('soil').innerText = "--";
+            document.getElementById('light').innerText = "--";
+            document.getElementById('waterLevel').innerText = "--";
+            document.getElementById('waterAlert').style.display = "none";
+        }
 
         // admin key in password
         function togglePassword(inputId, iconElement) {
@@ -383,6 +445,7 @@
                 document.getElementById('navMode').style.display = 'none';
                 document.getElementById('navThresh').style.display = 'none';
                 document.getElementById('navHist').style.display = 'none';
+                document.getElementById('navContact').style.display = 'none';
                 document.getElementById('navAdmin').style.display = 'flex';
                 
                 showPage('adminPage', document.getElementById('navAdmin'));
@@ -394,10 +457,46 @@
                 document.getElementById('navHist').style.display = 'flex';
                 document.getElementById('navAdmin').style.display = 'none';
 
+               const { data: standardData } = await sb.from('users').select('id').eq('email', email).single();
+
+        if (standardData) {
+            const { data: deviceData, error: devErr } = await sb.from('devices')
+                .select('id')
+                .eq('user_id', standardData.id)
+                .single();
+            
+            if (deviceData) {
+                // 有设备:正常显示导航栏并跳去 Dashboard
+                currentUserDeviceId = deviceData.id;
+                console.log("This user is assigned to Device ID:", currentUserDeviceId);
+                resetDashboardValues();
+                subscribeDeviceTopics();
+
+                document.getElementById('navDash').style.display = 'flex';
+                document.getElementById('navMode').style.display = 'flex';
+                document.getElementById('navThresh').style.display = 'flex';
+                document.getElementById('navHist').style.display = 'flex';
+                document.getElementById('navAdmin').style.display = 'none';
+
                 showPage('page1', document.getElementById('navDash'));
+            } else {
+                // 没有设备:隐藏所有导航,跳去联系管理员页面,并且直接 return
+                currentUserDeviceId = null;
+                resetDashboardValues();
+
+                document.getElementById('navDash').style.display = 'none';
+                document.getElementById('navMode').style.display = 'none';
+                document.getElementById('navThresh').style.display = 'none';
+                document.getElementById('navHist').style.display = 'none';
+                document.getElementById('navAdmin').style.display = 'none';
+
+                showPage('contactPage', null);
+                return; // 关键:不要再往下执行
             }
         }
+    }
 
+        }
         async function handleSignOut() {
             await sb.auth.signOut();
             document.getElementById('authEmail').value = "";
@@ -427,14 +526,26 @@
             overlay.style.display = "none";
         }
         
-        function showPage(id, link) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active-page');
-            if(link) link.classList.add('active');
-            closeNav();
-            if(id === 'page4') loadLogs();
-        }
+                function showPage(id, link) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.getElementById(id).classList.add('active-page');
+                if(link) link.classList.add('active');
+                closeNav();
+                
+                            // 💡 核心修改：切换到历史页面时，把我们登录时抓到的 currentUserDeviceId 传进去
+                        if (id === 'page4') {
+                    if (currentUserDeviceId) {
+                        loadLogs(currentUserDeviceId);
+                    } else {
+                        alert("Please sign in to view history.");
+                        return;
+                    }
+                }
+                if (id === 'contactPage') {
+        document.getElementById('contactUnbound').style.display = currentUserDeviceId ? 'none' : 'block';
+    }
+}
 
         mqtt.onMessageArrived = (msg) => { //Real time data from MQTT
             const d = JSON.parse(msg.payloadString);
@@ -456,10 +567,19 @@
             if (msg.destinationName === CONFIG.topics.status) syncUI(d);
         };
 
-        mqtt.connect({ useSSL: true, userName: CONFIG.user, password: CONFIG.pass, onSuccess: () => {
-            mqtt.subscribe(CONFIG.topics.data); mqtt.subscribe(CONFIG.topics.status);
-        }});
+                  mqtt.connect({
+              useSSL: true,
+              userName: CONFIG.user,
+              password: CONFIG.pass,
+              onSuccess: () => {
+                  mqttReady = true;
+                  console.log("MQTT connected.");
 
+                  if (currentUserDeviceId) {
+                      subscribeDeviceTopics();
+                  }
+              }
+          });
         function syncUI(d) {
             const isAuto = !d.manual_mode;
             document.getElementById('modeControl').checked = isAuto;
@@ -485,57 +605,62 @@
             document.getElementById('lightStatus').innerText = d.manual_light ? "ON" : "OFF";
         }
 
-                        async function loadLogs(searchDate = "", fromTime = "", toTime = "") {
-                      const list = document.getElementById('logContainer');
-                      list.innerHTML = `<p style="text-align: center;">Executing Distributed Client JOIN...</p>`;
-
-                      // 💡 1. 建立 4 张垂直传感器子表的独立查询流
-                      let qAir = sb.from('air_logs').select('*').order('created_at', { ascending: false });
-                      let qSoil = sb.from('soil_logs').select('*');
-                      let qLight = sb.from('light_logs').select('*');
-                      let qWater = sb.from('water_logs').select('*');
-
-                      if (searchDate && searchDate.trim() !== "") {
-                          let start = fromTime && toTime ? `${searchDate} ${fromTime}:00` : `${searchDate} 00:00:00`;
-                          let end = fromTime && toTime ? `${searchDate} ${toTime}:59` : `${searchDate} 23:59:59`;
-
-                          qAir = qAir.gte('created_at', start).lte('created_at', end);
-                          qSoil = qSoil.gte('created_at', start).lte('created_at', end);
-                          qLight = qLight.gte('created_at', start).lte('created_at', end);
-                          qWater = qWater.gte('created_at', start).lte('created_at', end);
-                      }
-
-                      // 💡 2. 向云端发起高性能前端并发多路网络请求
-                      const [resAir, resSoil, resLight, resWater] = await Promise.all([qAir, qSoil, qLight, qWater]);
-
-                      if (resAir.error || resSoil.error || resLight.error || resWater.error) {
-                          list.innerHTML = `<p style="text-align: center; color: red;">Error: Telemetry Sync Failed.</p>`;
-                          return;
-                      }
-
-                      // 💡 3. 前端核心时序等值拼接核心算法 (Time-series Stitching Algorithm)
-                      const compiledLogs = resAir.data.map(air => {
-                          const airTimestamp = new Date(air.created_at).setMilliseconds(0); // 抹平微秒级偏差，秒级精准对齐
-
-                          // 贪婪匹配相同秒数时间戳的其他物理子表记录
-                          const matchSoil = resSoil.data.find(s => new Date(s.created_at).setMilliseconds(0) === airTimestamp) || {};
-                          const matchLight = resLight.data.find(l => new Date(l.created_at).setMilliseconds(0) === airTimestamp) || {};
-                          const matchWater = resWater.data.find(w => new Date(w.created_at).setMilliseconds(0) === airTimestamp) || {};
-
-                          return {
-                              id: air.id,
-                              created_at: air.created_at,
-                              temperature: air.temperature,
-                              humidity: air.humidity,
-                              soil_moisture: matchSoil.soil_moisture !== undefined ? matchSoil.soil_moisture : "--",
-                              light_lux: matchLight.light_lux !== undefined ? matchLight.light_lux : "--",
-                              water_level: matchWater.water_level !== undefined ? matchWater.water_level : "--"
-                          };
-                      });
-
-                      currentLogsData = compiledLogs; 
-                      renderLogs(compiledLogs);
+                                  // 💡 让函数接收一个通用的 deviceId 参数
+              async function loadLogs(deviceId, searchDate = "", fromTime = "", toTime = "") {
+                  if (!deviceId) {
+                      document.getElementById('logContainer').innerHTML = `<p style="text-align: center; color: red;">No device bound to this account.</p>`;
+                      return;
                   }
+
+                  const list = document.getElementById('logContainer');
+                  list.innerHTML = `<p style="text-align: center;">Executing Distributed Client JOIN...</p>`;
+
+                  // 💡 将原本写死的 .eq('device_id', 1) 全部改为动态的 .eq('device_id', deviceId)
+                  let qAir = sb.from('air_logs').select('*').eq('device_id', deviceId).order('created_at', { ascending: false });
+                  let qSoil = sb.from('soil_logs').select('*').eq('device_id', deviceId);
+                  let qLight = sb.from('light_logs').select('*').eq('device_id', deviceId);
+                  let qWater = sb.from('water_logs').select('*').eq('device_id', deviceId);
+
+            if (searchDate && searchDate.trim() !== "") {
+                let start = fromTime && toTime ? `${searchDate} ${fromTime}:00` : `${searchDate} 00:00:00`;
+                let end = fromTime && toTime ? `${searchDate} ${toTime}:59` : `${searchDate} 23:59:59`;
+
+                qAir = qAir.gte('created_at', start).lte('created_at', end);
+                qSoil = qSoil.gte('created_at', start).lte('created_at', end);
+                qLight = qLight.gte('created_at', start).lte('created_at', end);
+                qWater = qWater.gte('created_at', start).lte('created_at', end);
+            }
+
+            const [resAir, resSoil, resLight, resWater] = await Promise.all([qAir, qSoil, qLight, qWater]);
+
+            if (resAir.error || resSoil.error || resLight.error || resWater.error) {
+                list.innerHTML = `<p style="text-align: center; color: red;">Error: Telemetry Sync Failed.</p>`;
+                return;
+            }
+
+            // 💡 核心改进 2：将原本的精确秒对齐，升级为“3秒滑动窗口时间融合算法”
+            const compiledLogs = resAir.data.map(air => {
+                const airTime = new Date(air.created_at).getTime(); // 获取空气数据的毫秒级时间戳
+
+                // 寻找在 3000 毫秒（3秒）误差范围内的土壤、光照、水位记录进行拼接
+                const matchSoil = resSoil.data.find(s => Math.abs(new Date(s.created_at).getTime() - airTime) <= 3000) || {};
+                const matchLight = resLight.data.find(l => Math.abs(new Date(l.created_at).getTime() - airTime) <= 3000) || {};
+                const matchWater = resWater.data.find(w => Math.abs(new Date(w.created_at).getTime() - airTime) <= 3000) || {};
+
+                return {
+                    id: air.id,
+                    created_at: air.created_at,
+                    temperature: air.temperature,
+                    humidity: air.humidity,
+                    soil_moisture: matchSoil.soil_moisture !== undefined ? matchSoil.soil_moisture : "--",
+                    light_lux: matchLight.light_lux !== undefined ? matchLight.light_lux : "--",
+                    water_level: matchWater.water_level !== undefined ? matchWater.water_level : "--"
+                };
+            });
+
+            currentLogsData = compiledLogs; 
+            renderLogs(compiledLogs);
+        }
 
         function renderLogs(logs) {
             const list = document.getElementById('logContainer');
@@ -610,15 +735,20 @@
             document.getElementById('selectAllLogs').checked = (count === total && total > 0);
         }
 
-        function filterLogs() {
-            const rawInput = document.getElementById('logSearchInput').value;
-            const dateVal = (rawInput && String(rawInput).trim() !== "") ? String(rawInput).trim() : "";
-            
-            const fromVal = document.getElementById('fromTimeInput').value;
-            const toVal = document.getElementById('toTimeInput').value;
-            
-            loadLogs(dateVal, fromVal, toVal);
-        }
+       function filterLogs() {
+    const rawInput = document.getElementById('logSearchInput').value;
+    const dateVal = (rawInput && String(rawInput).trim() !== "") ? String(rawInput).trim() : "";
+
+    const fromVal = document.getElementById('fromTimeInput').value;
+    const toVal = document.getElementById('toTimeInput').value;
+
+    if (!currentUserDeviceId) {
+        alert("No device has been assigned to your account yet.");
+        return;
+    }
+
+    loadLogs(currentUserDeviceId, dateVal, fromVal, toVal);
+}
 
         function printSelectedLogs() {
             const checkedBoxes = document.querySelectorAll('.log-checkbox:checked');
@@ -703,58 +833,172 @@
             }, 250);
         }
 
-        async function loadRealUsers() { // load all account details 
-            const container = document.getElementById('userTableContainer');
-            
-                          // 💡 核心修改：并发拉取分立的两张账户底表
-              const { data: admins, error: err1 } = await sb.from('admins').select('*');
-              const { data: standards, error: err2 } = await sb.from('users').select('*');
+     async function loadRealUsers() {
+    const container = document.getElementById('userTableContainer');
 
-              if (err1 || err2) {
-                  container.innerHTML = `<p style="text-align: center; color: red;">Error: Fetching users failed.</p>`;
-                  return;
-              }
+    const { data: admins, error: err1 } = await sb.from('admins').select('*');
+    const { data: standards, error: err2 } = await sb.from('users').select('*');
+   const { data: devices, error: err3 } = await sb
+    .from('devices')
+    .select('id, device_name, user_id, created_by, created_at')
+    .order('id', { ascending: true });
 
-              // 💡 前端内存数组合体，并升序排列
-              const data = [...(admins || []), ...(standards || [])].sort((a, b) => a.id - b.id);
+console.log("devices from supabase:", devices, err3);
 
-            if (!data || data.length === 0) {
-                container.innerHTML = `<p style="text-align: center;">No users found in database.</p>`;
-                return;
-            }
+    if (err1 || err2 || err3) {
+    console.error("admins error:", err1);
+    console.error("users error:", err2);
+    console.error("devices error:", err3);
 
-            let html = `
-                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
-                    <tr style="border-bottom: 2px solid #2d6a4f; color: #2d6a4f;">
-                        <th style="padding: 12px;">System ID</th>
-                        <th style="padding: 12px;">User Email Address</th>
-                        <th style="padding: 12px;">Username</th>
-                        <th style="padding: 12px;">Role/Access</th>
-                        <th style="padding: 12px;">Account Status</th>
-                        <th style="padding: 12px;">Action</th>
-                    </tr>`;
+    container.innerHTML = `
+        <p style="text-align: center; color: red;">
+            Error: Fetching users or devices failed.<br>
+            ${err3 ? err3.message : ""}
+        </p>`;
+    return;
+}
 
-            data.forEach(user => {
-                const roleBadge = (user.role === 'admin') 
-                    ? `<span style="background: #ff9f1c; color:white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">ADMIN</span>`
-                    : `<span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">USER</span>`;
+    const allUsers = [...(admins || []), ...(standards || [])].sort((a, b) => a.id - b.id);
 
-                html += `
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px;">UID-${String(user.id).padStart(3, '0')}</td>
-                        <td style="padding: 12px; font-weight: bold;">${user.email}</td>
-                        <td style="padding: 12px;">${user.username || 'N/A'}</td>
-                        <td style="padding: 12px;">${roleBadge}</td>
-                        <td style="padding: 12px; color: green;">● Active</td>
-                        <td style="padding: 12px;">
-                            <button onclick="deleteUser(${user.id}, '${user.email}')" style="background: #e63946; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;"><i class="fas fa-trash-alt"></i> Delete</button>
-                        </td>
-                    </tr>`;
-            });
-            
-            html += `</table>`;
-            container.innerHTML = html;
-        }
+    if (!allUsers || allUsers.length === 0) {
+        container.innerHTML = `<p style="text-align: center;">No users found in database.</p>`;
+        return;
+    }
+
+    let html = `
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+            <tr style="border-bottom: 2px solid #2d6a4f; color: #2d6a4f;">
+                <th style="padding: 12px;">System ID</th>
+                <th style="padding: 12px;">User Email Address</th>
+                <th style="padding: 12px;">Username</th>
+                <th style="padding: 12px;">Role/Access</th>
+                <th style="padding: 12px;">Assigned Device</th>
+                <th style="padding: 12px;">Account Status</th>
+                <th style="padding: 12px;">Action</th>
+            </tr>`;
+
+    allUsers.forEach(user => {
+        const roleBadge = user.role === 'admin'
+            ? `<span style="background: #ff9f1c; color:white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">ADMIN</span>`
+            : `<span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">USER</span>`;
+
+        const assignedDevice = (devices || []).find(device => Number(device.user_id) === Number(user.id));
+
+        const deviceSelect = user.role === 'admin'
+            ? `<span style="color: #888; font-weight: 600;">N/A</span>`
+            : `
+                <select onchange="assignDeviceToUser(${user.id}, this.value)" style="min-width: 170px; height: 38px !important; font-size: 0.85rem;">
+                    <option value="">No Device</option>
+                    ${(devices || []).map(device => {
+                        const isSelected = assignedDevice && Number(assignedDevice.id) === Number(device.id);
+                        const assignedToOtherUser = device.user_id && Number(device.user_id) !== Number(user.id);
+                        const label = `${device.device_name || 'Device ' + device.id} (ID: ${device.id})${assignedToOtherUser ? ' - Assigned' : ''}`;
+
+                        return `
+                            <option value="${device.id}" ${isSelected ? 'selected' : ''} ${assignedToOtherUser ? 'disabled' : ''}>
+                                ${label}
+                            </option>`;
+                    }).join('')}
+                </select>`;
+
+        html += `
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 12px;">UID-${String(user.id).padStart(3, '0')}</td>
+                <td style="padding: 12px; font-weight: bold;">${user.email}</td>
+                <td style="padding: 12px;">${user.username || 'N/A'}</td>
+                <td style="padding: 12px;">${roleBadge}</td>
+                <td style="padding: 12px;">${deviceSelect}</td>
+                <td style="padding: 12px; color: green;">Active</td>
+                <td style="padding: 12px;">
+                    <button onclick="deleteUser(${user.id}, '${user.email}')" style="background: #e63946; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </td>
+            </tr>`;
+    });
+
+    html += `</table>`;
+    container.innerHTML = html;
+}
+
+
+async function assignDeviceToUser(userId, deviceId) {
+    const selectedDeviceId = deviceId ? Number(deviceId) : null;
+
+    const { error: clearError } = await sb
+        .from('devices')
+        .update({ user_id: null })
+        .eq('user_id', userId);
+
+    if (clearError) {
+        alert("Failed to clear old device assignment: " + clearError.message);
+        loadRealUsers();
+        return;
+    }
+
+    if (!selectedDeviceId) {
+        alert("Device assignment removed.");
+        loadRealUsers();
+        return;
+    }
+
+    const { error } = await sb
+        .from('devices')
+        .update({ user_id: userId })
+        .eq('id', selectedDeviceId);
+
+    if (error) {
+        alert("Failed to assign device: " + error.message);
+    } else {
+        alert("Device assigned successfully.");
+    }
+
+    loadRealUsers();
+}
+async function createNewDevice() {
+    const deviceId = Number(document.getElementById('newDeviceId').value);
+    const deviceName = document.getElementById('newDeviceName').value.trim();
+
+    if (!deviceId || deviceId <= 0) {
+        alert("Please enter a valid Device ID.");
+        return;
+    }
+
+    if (!deviceName) {
+        alert("Please enter a device name.");
+        return;
+    }
+
+    const currentAdminEmail = document.getElementById('authEmail').value;
+    const { data: adminData, error: adminError } = await sb
+        .from('admins')
+        .select('id')
+        .eq('email', currentAdminEmail)
+        .single();
+
+    if (adminError || !adminData) {
+        alert("Cannot identify current admin.");
+        return;
+    }
+
+    const { error } = await sb.from('devices').insert([{
+        id: deviceId,
+        device_name: deviceName,
+        user_id: null,
+        created_by: adminData.id
+    }]);
+
+    if (error) {
+        alert("Failed to create device: " + error.message);
+        return;
+    }
+
+    alert(`Device ID ${deviceId} created successfully.`);
+    document.getElementById('newDeviceId').value = "";
+    document.getElementById('newDeviceName').value = "";
+
+    loadRealUsers();
+}
 
         async function createNewUser() {
             const email = document.getElementById('newEmail').value.trim();
@@ -829,11 +1073,16 @@
             }
         }
 
-        function send(payload) {
-            const msg = new Paho.MQTT.Message(JSON.stringify(payload));
-            msg.destinationName = CONFIG.topics.set;
-            mqtt.send(msg);
-        }
+                  function send(payload) {
+              if (!CONFIG.topics.set) {
+                  alert("No device topic available. Please make sure this account has an assigned device.");
+                  return;
+              }
+
+              const msg = new Paho.MQTT.Message(JSON.stringify(payload));
+              msg.destinationName = CONFIG.topics.set;
+              mqtt.send(msg);
+          }
 
         function deploy() {
             settingsInSync = true; 
