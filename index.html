@@ -292,7 +292,7 @@
             <p style="color: #666;">Please contact the system administrator to assign a device before using the dashboard.</p>
         </div>
 
-        <p style="font-weight: bold; color: var(--text); margin-top: 25px;">Email: admin123@gmail.com</p>
+        <p style="font-weight: bold; color: var(--text); margin-top: 25px;">Email: admin@gmail.com</p>
     </div>
 
 </div>
@@ -617,9 +617,9 @@
 
                   // 💡 将原本写死的 .eq('device_id', 1) 全部改为动态的 .eq('device_id', deviceId)
                   let qAir = sb.from('air_logs').select('*').eq('device_id', deviceId).order('created_at', { ascending: false });
-                  let qSoil = sb.from('soil_logs').select('*').eq('device_id', deviceId);
-                  let qLight = sb.from('light_logs').select('*').eq('device_id', deviceId);
-                  let qWater = sb.from('water_logs').select('*').eq('device_id', deviceId);
+                  let qSoil = sb.from('soil_logs').select('*').eq('device_id', deviceId).order('created_at', { ascending: false });
+                  let qLight = sb.from('light_logs').select('*').eq('device_id', deviceId).order('created_at', { ascending: false });
+                  let qWater = sb.from('water_logs').select('*').eq('device_id', deviceId).order('created_at', { ascending: false });
 
             if (searchDate && searchDate.trim() !== "") {
                 let start = fromTime && toTime ? `${searchDate} ${fromTime}:00` : `${searchDate} 00:00:00`;
