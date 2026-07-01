@@ -718,11 +718,6 @@
               // 💡 前端内存数组合体，并升序排列
               const data = [...(admins || []), ...(standards || [])].sort((a, b) => a.id - b.id);
 
-            if (error) {
-                container.innerHTML = `<p style="text-align: center; color: red;">Error: ${error.message}</p>`;
-                return;
-            }
-
             if (!data || data.length === 0) {
                 container.innerHTML = `<p style="text-align: center;">No users found in database.</p>`;
                 return;
